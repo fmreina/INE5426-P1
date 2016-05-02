@@ -1,13 +1,14 @@
 #include "ast.h"
-//TODO: #include "st.h" // TODO: symbol table
+#include "symbolTable.h"
+#include <typeinfo>
 
 using namespace AST;
 
-//TODO: extern ST::SymbolTable symtab;
+extern ST::SymbolTable symTab;
 
 // class Integer
 void Integer::printTree(){
-	std::cout << value;
+	//std::cout << value;
 	return;
 }
 
@@ -19,7 +20,10 @@ int Integer::computeTree(){
 void BinOp::printTree(){
 	left->printTree();
 	switch(op){
-		case plus: std::cout << " + "; break;
+		case plus:
+			//std::cout << " + ";
+			std::cout << "(soma "<< typeid(left).name() <<")";
+		break;
 		case times: std::cout << " * "; break;
 	}
 	right->printTree();
@@ -49,9 +53,21 @@ int Block::computeTree(){
 	int value;
 	for (Node* line: lines) {
 		value = line->computeTree();
-		std::cout << "Computed "<< value << std::endl;
+		//std::cout << "Computed "<< value << std::endl;
 	}
 	return 0;
 }
 
 // TODO: Variable class
+void Word::printTree(){
+	if ( next != NULL ){
+		next->printTree();
+		std::cout << ", ";
+	}
+	std::cout << word;
+	return;
+}
+
+int Word::computeTree(){
+	return symTab.entryList[word].value;
+}

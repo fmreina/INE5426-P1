@@ -3,6 +3,8 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 extern void yyerrer(const char *s, ...);
 namespace AST {
 
@@ -10,6 +12,7 @@ namespace AST {
 	enum Operation { plus, times};
 
 	class Node;
+//	extern map<string, int> wordMap;
 
 	// List of ASTs
 	typedef std::vector<Node*> NodeList;
@@ -39,7 +42,7 @@ namespace AST {
 			int computeTree();
 	};
 
-	// TODO: must complete the block declaration
+	// TODO: must complete the block declaration?
 	class Block : public Node {
 		public:
 			NodeList lines;
@@ -49,5 +52,12 @@ namespace AST {
 			int computeTree();
 	};
 
-	//TODO: class variable ..
+	class Word : public Node {
+		public:
+			std::string word;
+			Node* next;
+			Word(std::string word, Node* next) : word(word), next(next) { }
+			void printTree();
+			int computeTree();
+		};
 }
