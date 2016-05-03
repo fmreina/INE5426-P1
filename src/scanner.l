@@ -13,6 +13,7 @@ void yyerror(const char* s, ...);
 
 digit[0-9]+
 word[a-zA-Z]+
+type[int, real, bool]
 
 %%
 
@@ -20,11 +21,13 @@ word[a-zA-Z]+
 \n		{ return T_NEW_LINE; }
 "+"		{ return T_PLUS; }
 "="		{ return T_ASSIGN; }
+","		{ return T_COMMA; }
 
 "def"	{ return T_DEFINITION; }
 
 {digit}	{ yylval.integer = std::atoi(yytext); return T_INT; }
-{word}	{ yylval.string = strdup(yytext); return T_WORD; }
+{type}	{ yylval.string = strdup(yytext); return T_TYPE; }
+{word}	{ yylval.string = strdup(yytext); return T_WORD; } // leave always for the last to avoid error. 
 
 .		{ yyerror("Unknown token! %c\n", *yytext); } /* inform of any unknow character */
 
