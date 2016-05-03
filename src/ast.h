@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 
+using namespace std;
+
 extern void yyerrer(const char *s, ...);
 namespace AST {
 
 	// Binary operations
-	enum Operation { plus, times};
+	enum Operation { plus, times, assign};
 
 	class Node;
 
@@ -39,7 +41,7 @@ namespace AST {
 			int computeTree();
 	};
 
-	// TODO: must complete the block declaration
+	// TODO: must complete the block declaration?
 	class Block : public Node {
 		public:
 			NodeList lines;
@@ -49,5 +51,12 @@ namespace AST {
 			int computeTree();
 	};
 
-	//TODO: class variable ..
+	class Word : public Node {
+		public:
+			std::string word;
+			Node* next;
+			Word(std::string word, Node* next) : word(word), next(next) { }
+			void printTree();
+			int computeTree();
+		};
 }

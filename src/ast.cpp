@@ -1,9 +1,10 @@
 #include "ast.h"
-//TODO: #include "st.h" // TODO: symbol table
+#include "symbolTable.h"
+#include <typeinfo>
 
 using namespace AST;
 
-//TODO: extern ST::SymbolTable symtab;
+extern ST::SymbolTable symTab;
 
 // class Integer
 void Integer::printTree(){
@@ -19,8 +20,12 @@ int Integer::computeTree(){
 void BinOp::printTree(){
 	left->printTree();
 	switch(op){
-		case plus: std::cout << " + "; break;
+		case plus:
+			std::cout << " + ";
+			//std::cout << "(soma "<< typeid(left).name() <<")";
+		break;
 		case times: std::cout << " * "; break;
+		case assign: std::cout << " = "; break;
 	}
 	right->printTree();
 	return;
@@ -33,6 +38,10 @@ int BinOp::computeTree(){
 	switch(op){
 		case plus: value = lvalue + rvalue; break;
 		case times: value = lvalue * rvalue; break;
+		case assign: Word* leftvar = dynamic_cast<Word*>(left);
+					symTab.entryList[leftvar->word].value = rvalue;
+					value = rvalue;
+					break;
 	}
 	return value;
 }
@@ -55,3 +64,15 @@ int Block::computeTree(){
 }
 
 // TODO: Variable class
+void Word::printTree(){
+	if ( next != NULL ){
+		next->printTree();
+		std::cout << ", ";
+	}
+	std::cout << word;
+	return;
+}
+
+int Word::computeTree(){
+	return symTab.entryList[word].value;
+}
