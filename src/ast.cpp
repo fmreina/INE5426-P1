@@ -8,7 +8,7 @@ extern ST::SymbolTable symTab;
 
 // class Integer
 void Integer::printTree(){
-	//std::cout << value;
+	std::cout << value;
 	return;
 }
 
@@ -21,8 +21,8 @@ void BinOp::printTree(){
 	left->printTree();
 	switch(op){
 		case plus:
-			//std::cout << " + ";
-			std::cout << "(soma "<< typeid(left).name() <<")";
+			std::cout << " + ";
+			//std::cout << "(soma "<< typeid(left).name() <<")";
 		break;
 		case times: std::cout << " * "; break;
 		case assign: std::cout << " = "; break;
@@ -58,7 +58,7 @@ int Block::computeTree(){
 	int value;
 	for (Node* line: lines) {
 		value = line->computeTree();
-		//std::cout << "Computed "<< value << std::endl;
+		std::cout << "Computed "<< value << std::endl;
 	}
 	return 0;
 }

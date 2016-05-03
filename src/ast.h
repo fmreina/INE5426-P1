@@ -12,7 +12,6 @@ namespace AST {
 	enum Operation { plus, times, assign};
 
 	class Node;
-//	extern map<string, int> wordMap;
 
 	// List of ASTs
 	typedef std::vector<Node*> NodeList;
