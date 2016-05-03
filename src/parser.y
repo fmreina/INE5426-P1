@@ -17,6 +17,7 @@
 %union {
 	int integer;
 	const char* string;
+	const char* type;
 
 	AST::Node *node;
 	AST::Block *block;
@@ -29,6 +30,8 @@
 %token <string> T_WORD
 %token T_DEFINITION
 %token T_ASSIGN
+%token T_COMMA
+%token <type> T_TYPE
 
 /* type defines the type of our nonterminal symbols.
  * Types should match the names used in the union.
@@ -45,6 +48,7 @@
  */
  %left T_DEFINITION
  %left T_PLUS
+ %left T_ASSIGN
  %nonassoc error
  
  /* starting rule */
@@ -72,6 +76,7 @@ expression: T_INT { $$ = new AST::Integer($1); }
 		 ;
 		 
 definition: T_WORD { $$ = symTab.newVariable( $1, NULL );}
+			| definition T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 ); }
 			;
  	
  	
