@@ -20,6 +20,7 @@ word[a-zA-Z]+
 \n		{ return T_NEW_LINE; }
 "+"		{ return T_PLUS; }
 "="		{ return T_ASSIGN; }
+","		{ return T_COMMA; }
 
 "def"	{ return T_DEFINITION; }
 

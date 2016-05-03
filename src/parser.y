@@ -29,6 +29,7 @@
 %token <string> T_WORD
 %token T_DEFINITION
 %token T_ASSIGN
+%token T_COMMA
 
 /* type defines the type of our nonterminal symbols.
  * Types should match the names used in the union.
@@ -72,6 +73,7 @@ expression: T_INT { $$ = new AST::Integer($1); }
 		 ;
 		 
 definition: T_WORD { $$ = symTab.newVariable( $1, NULL );}
+			| definition T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 ); }
 			;
  	
  	
