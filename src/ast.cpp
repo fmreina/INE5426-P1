@@ -25,6 +25,7 @@ void BinOp::printTree(){
 			std::cout << "(soma "<< typeid(left).name() <<")";
 		break;
 		case times: std::cout << " * "; break;
+		case assign: std::cout << " = "; break;
 	}
 	right->printTree();
 	return;
@@ -37,6 +38,10 @@ int BinOp::computeTree(){
 	switch(op){
 		case plus: value = lvalue + rvalue; break;
 		case times: value = lvalue * rvalue; break;
+		case assign: Word* leftvar = dynamic_cast<Word*>(left);
+					symTab.entryList[leftvar->word].value = rvalue;
+					value = rvalue;
+					break;
 	}
 	return value;
 }

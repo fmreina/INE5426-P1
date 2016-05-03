@@ -19,6 +19,7 @@ word[a-zA-Z]+
 [/t]	; // to ignore spaaces
 \n		{ return T_NEW_LINE; }
 "+"		{ return T_PLUS; }
+"="		{ return T_ASSIGN; }
 
 "def"	{ return T_DEFINITION; }
 

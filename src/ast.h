@@ -9,7 +9,7 @@ extern void yyerrer(const char *s, ...);
 namespace AST {
 
 	// Binary operations
-	enum Operation { plus, times};
+	enum Operation { plus, times, assign};
 
 	class Node;
 //	extern map<string, int> wordMap;
