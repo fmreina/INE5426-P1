@@ -9,7 +9,7 @@ extern void yyerrer(const char *s, ...);
 namespace AST {
 
 	// Binary operations
-	enum Operation { plus, times, assign};
+	enum Operation { plus, minus, times, divide, assign};
 
 	class Node;
 

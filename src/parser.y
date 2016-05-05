@@ -17,6 +17,7 @@
 %union {
 	int integer;
 	const char* string;
+	const char* type;
 
 	AST::Node *node;
 	AST::Block *block;
@@ -24,12 +25,37 @@
 
 /* token defines terminal Symbols (tokens) */
 %token T_NEW_LINE
+
 %token T_PLUS
+%token T_MINUS
+%token T_TIMES
+%token T_DIVIDE
+%token T_GRATER
+%token T_GRATER_THAN	
+%token T_SMALLER
+%token T_SMALLER_THAN	
+%token T_EQUALS	
+%token T_DIFFERENT	
+%token T_NOT	
+%token T_TRUE	
+%token T_FALSE	
+%token T_AND	
+%token T_OR	
+
 %token <integer> T_INT
 %token <string> T_WORD
+
 %token T_DEFINITION
+%token T_TYPE_INT
+%token T_TYPE_REAL
+%token T_TYPE_BOOL
+
 %token T_ASSIGN
 %token T_COMMA
+%token T_COLON
+%token T_SEMICOLON
+%token T_OPEN_PARENTHESIS
+%token T_CLOSE_PARENTHESIS
 
 /* type defines the type of our nonterminal symbols.
  * Types should match the names used in the union.
@@ -45,7 +71,14 @@
  * The latest it is listed, the highest the precedence
  */
  %left T_DEFINITION
- %left T_PLUS
+ %left T_PLUS T_MINUS
+ %left T_TIMES T_DIVIDE
+ %left T_AND T_OR
+ %left T_NOT T_TRUE T_FALSE
+ %left T_GRATER T_GRATER_THAN T_SMALLER T_SMALLER_THAN T_EQUALS T_DIFFERENT
+ %left T_CLOSE_PARENTHESIS
+ %left T_OPEN_PARENTHESIS
+ %right U_NEGATIVE
  %nonassoc error
  
  /* starting rule */
@@ -61,14 +94,22 @@ lines : line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  		;
  		
 line : T_NEW_LINE { $$ = NULL; } /* nothing to be used */
-		| expression T_NEW_LINE /* $$ = $1 when nothing is said */
-		| T_DEFINITION definition T_NEW_LINE { $$ = $2;}
+		/*| expression T_NEW_LINE *//* $$ = $1 when nothing is said */
+		| T_DEFINITION T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
+		| T_TYPE_INT T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3; }
+		| T_TYPE_REAL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
+		| T_TYPE_BOOL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_WORD T_ASSIGN expression { AST::Node* node = symTab.assignVariable($1);
 						$$ = new AST::BinOp(node, AST::assign, $3); }
 		;
 		
 expression: T_INT { $$ = new AST::Integer($1); } 
 		 | expression T_PLUS expression { $$ = new AST::BinOp($1, AST::plus,$3); }
+		 | expression T_MINUS expression { $$ = new AST::BinOp($1, AST::minus,$3); }
+		 | expression T_DIVIDE expression { $$ = new AST::BinOp($1, AST::divide,$3); }
+		 | expression T_TIMES expression { $$ = new AST::BinOp($1, AST::times,$3); }
+		 /*| T_MINUS expression %prec U_NEGATIVE { $$ = new AST::Integer(-$2); }*/
+		 | T_OPEN_PARENTHESIS expression T_CLOSE_PARENTHESIS { $$ = ( $2 ); }
 		 | T_WORD { $$ = symTab.useVariable($1); }
 		 ;
 		 
