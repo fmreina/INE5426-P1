@@ -30,10 +30,10 @@
 %token T_MINUS
 %token T_TIMES
 %token T_DIVIDE
-%token T_GRATER
-%token T_GRATER_THAN	
+%token T_GREATER
+%token T_GREATER_EQUALS	
 %token T_SMALLER
-%token T_SMALLER_THAN	
+%token T_SMALLER_EQUALS	
 %token T_EQUALS	
 %token T_DIFFERENT	
 %token T_NOT	
@@ -75,7 +75,7 @@
  %left T_TIMES T_DIVIDE
  %left T_AND T_OR
  %left T_NOT T_TRUE T_FALSE
- %left T_GRATER T_GRATER_THAN T_SMALLER T_SMALLER_THAN T_EQUALS T_DIFFERENT
+ %left T_GREATER T_GREATER_EQUALS T_SMALLER T_SMALLER_EQUALS T_EQUALS T_DIFFERENT
  %left T_CLOSE_PARENTHESIS
  %left T_OPEN_PARENTHESIS
  %right U_NEGATIVE
@@ -94,12 +94,12 @@ lines : line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  		;
  		
 line : T_NEW_LINE { $$ = NULL; } /* nothing to be used */
-		/*| expression T_NEW_LINE *//* $$ = $1 when nothing is said */
+		| expression T_SEMICOLON T_NEW_LINE /* $$ = $1 when nothing is said */
 		| T_DEFINITION T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_TYPE_INT T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3; }
 		| T_TYPE_REAL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_TYPE_BOOL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
-		| T_WORD T_ASSIGN expression { AST::Node* node = symTab.assignVariable($1);
+		| T_WORD T_ASSIGN expression T_SEMICOLON T_NEW_LINE { AST::Node* node = symTab.assignVariable($1);
 						$$ = new AST::BinOp(node, AST::assign, $3); }
 		;
 		
@@ -108,6 +108,14 @@ expression: T_INT { $$ = new AST::Integer($1); }
 		 | expression T_MINUS expression { $$ = new AST::BinOp($1, AST::minus,$3); }
 		 | expression T_DIVIDE expression { $$ = new AST::BinOp($1, AST::divide,$3); }
 		 | expression T_TIMES expression { $$ = new AST::BinOp($1, AST::times,$3); }
+		 | expression T_SMALLER expression { $$ = new AST::BinOp($1, AST::smaller,$3); }
+		 | expression T_SMALLER_EQUALS expression { $$ = new AST::BinOp($1, AST::smaller_equals,$3); }
+		 | expression T_GREATER expression { $$ = new AST::BinOp($1, AST::greater,$3); }
+		 | expression T_GREATER_EQUALS expression { $$ = new AST::BinOp($1, AST::greater_equals,$3); }
+		 | expression T_EQUALS expression { $$ = new AST::BinOp($1, AST::equals,$3); }
+		 | expression T_DIFFERENT expression { $$ = new AST::BinOp($1, AST::different,$3); }
+		 | expression T_AND expression { $$ = new AST::BinOp($1, AST::and_op,$3); }
+		 | expression T_OR expression { $$ = new AST::BinOp($1, AST::or_op,$3); }
 		 /*| T_MINUS expression %prec U_NEGATIVE { $$ = new AST::Integer(-$2); }*/
 		 | T_OPEN_PARENTHESIS expression T_CLOSE_PARENTHESIS { $$ = ( $2 ); }
 		 | T_WORD { $$ = symTab.useVariable($1); }
