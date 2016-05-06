@@ -1,6 +1,10 @@
+#define PRINTER_H
+#include "printer.h"
+
 #include "ast.h"
 #include "symbolTable.h"
 #include <typeinfo>
+
 
 using namespace AST;
 
@@ -43,8 +47,9 @@ int BinOp::computeTree(){
 	int value, lvalue, rvalue;
 	lvalue = left->computeTree();
 	rvalue = right->computeTree();
+	debug("Debug test");
 	switch(op){
-		case plus: { std::cout<< "(valor "<< "<tipo> " << lvalue <<"(soma" << "<tipo>" << ") " << "valor "<< "<tipo>)"<< rvalue <<endl;
+		case plus: { printOp(lvalue, "inteiro", "soma", "inteira", rvalue, "inteiro");
 						value = lvalue + rvalue; } break;
 		case minus: { std::cout<< "(valor "<< "<tipo> " << lvalue <<"(subtracão" << "<tipo>" << ") " << "valor "<< "<tipo>)"<< rvalue <<endl;
 						value = lvalue - rvalue; } break;
