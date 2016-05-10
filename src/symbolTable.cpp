@@ -4,12 +4,22 @@ using namespace ST;
 
 extern SymbolTable symTab;
 
-AST::Node* SymbolTable::newVariable( std::string id, AST::Node* next){
+// AST::Node* SymbolTable::newVariable( std::string id, AST::Node* next){
+// 	if( checkId(id) ) yyerror("Variable redefinition! %s\n", id.c_str());
+// 	else {
+// 		Symbol entry(integer, variable, 0, false);  // FIXME: gets  only integer?
+// 		addSymbol( id, entry );
+// 	}
+// 	return new AST::Word( id, next );
+// }
+
+AST::Node* SymbolTable::newVariable( std::string id, AST::Node* next, Type type){
 	if( checkId(id) ) yyerror("Variable redefinition! %s\n", id.c_str());
 	else {
-		Symbol entry(integer, variable, 0, false);  // FIXME: gets  only integer?
+		Symbol entry(type, variable, 0, false);  // FIXME: gets  only integer?
 		addSymbol( id, entry );
 	}
+	// std::cout<<"["<<id<<"]= "<<symTab.entryList[id].type<<endl;
 	return new AST::Word( id, next );
 }
 

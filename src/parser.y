@@ -17,8 +17,7 @@
 %union {
 	int integer;
 	const char* string;
-	const char* type;
-
+	
 	AST::Node *node;
 	AST::Block *block;
 }
@@ -66,6 +65,7 @@
 %type <node> line
 %type <node> expression 
 %type <node> definition
+%type <node> definition_real
  
  /* Operator precedence for mathematical operators
  * The latest it is listed, the highest the precedence
@@ -97,7 +97,7 @@ line : T_NEW_LINE { $$ = NULL; } /* nothing to be used */
 		| expression T_SEMICOLON T_NEW_LINE /* $$ = $1 when nothing is said */
 		| T_DEFINITION T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_TYPE_INT T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3; }
-		| T_TYPE_REAL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
+		| T_TYPE_REAL T_COLON definition_real T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_TYPE_BOOL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
 		| T_WORD T_ASSIGN expression T_SEMICOLON T_NEW_LINE { AST::Node* node = symTab.assignVariable($1);
 						$$ = new AST::BinOp(node, AST::assign, $3); }
@@ -121,12 +121,14 @@ expression: T_INT { $$ = new AST::Integer($1); }
 		 | T_WORD { $$ = symTab.useVariable($1); }
 		 ;
 		 
-definition: T_WORD { $$ = symTab.newVariable( $1, NULL );}
-			| definition T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 ); }
+definition: T_WORD { $$ = symTab.newVariable( $1, NULL , ST::integer); }
+			| definition T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 , ST::integer); }
 			;
  	
- 	
- 	
+definition_real: T_WORD { $$ = symTab.newVariable( $1, NULL , ST::real); }
+				| definition_real T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 , ST::real); }
+				;
+
 %%
  	
 

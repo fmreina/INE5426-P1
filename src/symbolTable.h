@@ -8,7 +8,7 @@ extern void yyerror(const char* s, ...);
 namespace ST {
 	class Symbol;
 
-	enum Type { integer };
+	enum Type { integer, real, boolean };
 	enum Kind { variable };
 
 	typedef std::map<std::string, Symbol> SymbolList; // set of symbols
@@ -29,7 +29,8 @@ namespace ST {
 			SymbolTable(){}
 			bool checkId( std::string id ) { return entryList.find(id) != entryList.end(); } // @return true if variable was defined
 			void addSymbol(std::string id, Symbol newSymbol) { entryList[id] = newSymbol; }
-			AST::Node* newVariable( std::string id, AST::Node* next);
+			// AST::Node* newVariable( std::string id, AST::Node* next);
+			AST::Node* newVariable( std::string id, AST::Node* next, Type type);
 			AST::Node* assignVariable(std::string id);
 			AST::Node* useVariable(std::string id);
 	};

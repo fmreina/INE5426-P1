@@ -49,7 +49,7 @@ int BinOp::computeTree(){
 	rvalue = right->computeTree();
 	debug("Debug test");
 	switch(op){
-		case plus: { printOp(lvalue, "inteiro", "soma", "inteira", rvalue, "inteiro");
+		case plus: { printOp(lvalue, "", "soma", "inteira", rvalue, "inteiro");
 						value = lvalue + rvalue; } break;
 		case minus: { std::cout<< "(valor "<< "<tipo> " << lvalue <<"(subtracão" << "<tipo>" << ") " << "valor "<< "<tipo>)"<< rvalue <<endl;
 						value = lvalue - rvalue; } break;
@@ -98,7 +98,7 @@ int Block::computeTree(){
 	return 0;
 }
 
-// TODO: Variable class
+// class Word
 void Word::printTree(){
 	if ( next != NULL ){
 		next->printTree();
