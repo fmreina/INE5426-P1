@@ -12,17 +12,20 @@
 	
 %}
 
-/* yylval == %union 
- * union informs the values data can be stored */
+/* 
+ *	yylval == %union 
+ * 	union informs the values data can be stored 
+ */
 %union {
-	int integer;
 	const char* string;
 	
 	AST::Node *node;
 	AST::Block *block;
 }
 
-/* token defines terminal Symbols (tokens) */
+/*
+ *	token defines terminal Symbols (tokens)
+ */
 %token T_NEW_LINE
 
 %token T_PLUS
@@ -41,7 +44,9 @@
 %token T_AND	
 %token T_OR	
 
-%token <integer> T_INT
+%token <string> T_INT
+%token <string> T_REAL
+%token <string> T_BOOL
 %token <string> T_WORD
 
 %token T_DEFINITION
@@ -56,79 +61,77 @@
 %token T_OPEN_PARENTHESIS
 %token T_CLOSE_PARENTHESIS
 
-/* type defines the type of our nonterminal symbols.
- * Types should match the names used in the union.
- * Example: %type<node> expr
+/* 
+ *	type defines the type of our nonterminal symbols.
+ *	Types should match the names used in the union.
+ *	Example: %type<node> expr
  */
 %type <block> program
 %type <block> lines
 %type <node> line
+%type <node> declaration
+%type <node> type
+%type <node> variable_list
+%type <node> assignment
 %type <node> expression 
-%type <node> definition
-%type <node> definition_real
  
- /* Operator precedence for mathematical operators
- * The latest it is listed, the highest the precedence
+/*
+ *	Operator precedence for mathematical operators
+ *	The latest it is listed, the highest the precedence
  */
- %left T_DEFINITION
- %left T_PLUS T_MINUS
- %left T_TIMES T_DIVIDE
- %left T_AND T_OR
- %left T_NOT T_TRUE T_FALSE
- %left T_GREATER T_GREATER_EQUALS T_SMALLER T_SMALLER_EQUALS T_EQUALS T_DIFFERENT
- %left T_CLOSE_PARENTHESIS
- %left T_OPEN_PARENTHESIS
- %right U_NEGATIVE
- %nonassoc error
+%left T_DEFINITION
+%left T_PLUS T_MINUS
+%left T_TIMES T_DIVIDE
+%left T_AND T_OR
+%left T_NOT T_TRUE T_FALSE
+%left T_GREATER T_GREATER_EQUALS T_SMALLER T_SMALLER_EQUALS T_EQUALS T_DIFFERENT
+%left T_CLOSE_PARENTHESIS
+%left T_OPEN_PARENTHESIS
+%right U_NEGATIVE
+%nonassoc error
  
- /* starting rule */
- %start program
+/*
+ *	starting rule 
+ */
+%start program
  
 %%
- 
+/*
+ * Grammar structure as presented by llpilla 
+ */
 program : lines { programRoot = $1; }
- 	;
+ 		;
  	
-lines : line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
+lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  		| lines line { if($2 != NULL) $1->lines.push_back($2); }
  		;
  		
-line : T_NEW_LINE { $$ = NULL; } /* nothing to be used */
-		| expression T_SEMICOLON T_NEW_LINE /* $$ = $1 when nothing is said */
-		| T_DEFINITION T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
-		| T_TYPE_INT T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3; }
-		| T_TYPE_REAL T_COLON definition_real T_SEMICOLON T_NEW_LINE { $$ = $3;}
-		| T_TYPE_BOOL T_COLON definition T_SEMICOLON T_NEW_LINE { $$ = $3;}
-		| T_WORD T_ASSIGN expression T_SEMICOLON T_NEW_LINE { AST::Node* node = symTab.assignVariable($1);
-						$$ = new AST::BinOp(node, AST::assign, $3); }
+line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
+		| assignment T_SEMICOLON T_NEW_LINE
 		;
-		
-expression: T_INT { $$ = new AST::Integer($1); } 
-		 | expression T_PLUS expression { $$ = new AST::BinOp($1, AST::plus,$3); }
-		 | expression T_MINUS expression { $$ = new AST::BinOp($1, AST::minus,$3); }
-		 | expression T_DIVIDE expression { $$ = new AST::BinOp($1, AST::divide,$3); }
-		 | expression T_TIMES expression { $$ = new AST::BinOp($1, AST::times,$3); }
-		 | expression T_SMALLER expression { $$ = new AST::BinOp($1, AST::smaller,$3); }
-		 | expression T_SMALLER_EQUALS expression { $$ = new AST::BinOp($1, AST::smaller_equals,$3); }
-		 | expression T_GREATER expression { $$ = new AST::BinOp($1, AST::greater,$3); }
-		 | expression T_GREATER_EQUALS expression { $$ = new AST::BinOp($1, AST::greater_equals,$3); }
-		 | expression T_EQUALS expression { $$ = new AST::BinOp($1, AST::equals,$3); }
-		 | expression T_DIFFERENT expression { $$ = new AST::BinOp($1, AST::different,$3); }
-		 | expression T_AND expression { $$ = new AST::BinOp($1, AST::and_op,$3); }
-		 | expression T_OR expression { $$ = new AST::BinOp($1, AST::or_op,$3); }
-		 /*| T_MINUS expression %prec U_NEGATIVE { $$ = new AST::Integer(-$2); }*/
-		 | T_OPEN_PARENTHESIS expression T_CLOSE_PARENTHESIS { $$ = ( $2 ); }
-		 | T_WORD { $$ = symTab.useVariable($1); }
-		 ;
-		 
-definition: T_WORD { $$ = symTab.newVariable( $1, NULL , ST::integer); }
-			| definition T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 , ST::integer); }
-			;
- 	
-definition_real: T_WORD { $$ = symTab.newVariable( $1, NULL , ST::real); }
-				| definition_real T_COMMA T_WORD { $$ = symTab.newVariable( $3, $1 , ST::real); }
+
+declaration :	type T_COLON variable_list { $$ = $3; }
 				;
+
+type :	T_TYPE_INT { Type::lastType = Type::integer; }
+		| T_TYPE_REAL { Type::lastType = Type::real; }
+		| T_TYPE_BOOL { Type::lastType = Type::boolean; }
+		;
+
+variable_list:	T_WORD {  }
+			variable_list T_COMMA T_WORD {  }
+			;
+
+assignment: T_WORD T_ASSIGN expression {  }
+			;
+
+expression:	T_WORD {}
+			| T_INT {}
+			| T_REAL {}
+			| T_BOOL {}
+			| expression T_PLUS expression { }
+			;
+
 
 %%
  	
-

@@ -12,6 +12,7 @@ void yyerror(const char* s, ...);
 %option noyywrap nodefault yylineno
 
 digit[0-9]+
+real [0-9]*\.?[0-9]+|[0-9]+\.[0-9]* // from flexbison book page 21
 word[a-zA-Z]+
 
 %%
@@ -33,8 +34,8 @@ word[a-zA-Z]+
 "~"		{ return T_NOT; }	
 "AND"	{ return T_AND; }	
 "OR"	{ return T_OR; }	
-"TRUE"	{ return T_TRUE; }	
-"FALSE"	{ return T_FALSE; }	
+"TRUE"	{ return T_BOOL; }	
+"FALSE"	{ return T_BOOL; }	
 
 ","		{ return T_COMMA; }
 ":"		{ return T_COLON; }
@@ -47,7 +48,7 @@ word[a-zA-Z]+
 "real"	{ return T_TYPE_REAL; }
 "bool"	{ return T_TYPE_BOOL; }
 
-{digit}	{ yylval.integer = std::atoi(yytext); return T_INT; }
+{digit}	{ yylval.string = strdup(yytext); return T_INT; }
 {word}	{ yylval.string = strdup(yytext); return T_WORD; }
 
 .		{ yyerror("Unknown token! %c\n", *yytext); } /* inform of any unknow character */
