@@ -74,3 +74,17 @@ void Word::printTree(){
  	std::cout << "valor " << type << " " << value;
  	return;
  }
+
+/*
+ *	prints the value in the following format (using portuguese)
+ *	valor <Type::Type> <std::string>
+ *	exemple: valor boolean TRUE
+ */
+ void VariableDeclaration::printTree(){
+ 	std::cout << "Declaracão de variável " << type << ": ";
+ 	for( auto var = variables.begin(); var != variables.end(); var ++){
+ 		std::cout << dynamic_cast<Word *>(*var)->word;
+ 		if(next(var) != variables.end())
+ 			std::cout << ", ";
+ 	}
+ }

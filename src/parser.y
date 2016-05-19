@@ -21,6 +21,7 @@
 	
 	AST::Node *node;
 	AST::Block *block;
+	AST::VariableDeclaration *var;
 }
 
 /*
@@ -71,9 +72,10 @@
 %type <node> line
 %type <node> declaration
 %type <node> type
-%type <node> variable_list
+%type <var> variable_list
 %type <node> assignment
 %type <node> expression 
+%type <node> target
  
 /*
  *	Operator precedence for mathematical operators
@@ -99,37 +101,75 @@
 /*
  * Grammar structure as presented by llpilla 
  */
+
+/*
+ * A program is made of many lines (blocks) 
+ */
 program : lines { programRoot = $1; }
  		;
  	
+/*
+ * Each group of lines can be a single line or 
+ * a group of lines followed by a single line
+ */
 lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  		| lines line { if($2 != NULL) $1->lines.push_back($2); }
  		;
- 		
+
+/*
+ * A line may be a declaration or an assignment
+ */ 		
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
 		;
 
+/*
+ * A declaration is given by a type of variable 
+ * and a list of variables
+ */
 declaration :	type T_COLON variable_list { $$ = $3; }
 				;
 
+/*
+ * A type of variable may be an integer, real or boolean
+ */
 type :	T_TYPE_INT { Type::lastType = Type::integer; }
 		| T_TYPE_REAL { Type::lastType = Type::real; }
 		| T_TYPE_BOOL { Type::lastType = Type::boolean; }
 		;
 
-variable_list:	T_WORD {  }
-			variable_list T_COMMA T_WORD {  }
+/*
+ * Each list of variable can be a single word { creates a new instance of variableDeclaration and push the variable into the variable list}
+ * or a list of variables followed by a word { receives a new list and a variable, and push the the variable into the list }
+ */
+variable_list:	T_WORD { $$ = new AST::VariableDeclaration(Type::lastType);
+						 $$->variables.push_back(symTab.newVariable($1, Type::lastType)); }
+				| variable_list T_COMMA T_WORD { $$ = $1;
+												 $$->variables.push_back(symTab.newVariable($3, Type::lastType)); }
+				;
+
+/*
+* creates a relation and assign a expression to a variable coming from target
+*/
+assignment: target T_ASSIGN expression { $$ = new AST::BinOp($1, Operation::assign, $3); }
 			;
 
-assignment: T_WORD T_ASSIGN expression {  }
-			;
+/*
+* creates a new variable in the symbol table
+*/
+target: T_WORD { $$ = symTab.assignVariable($1); }
+		;
 
-expression:	T_WORD {}
-			| T_INT {}
-			| T_REAL {}
-			| T_BOOL {}
-			| expression T_PLUS expression { }
+/*
+* decalres a expression as being a variable, or a value, or an operation between two expressions
+* for T_WORD, it uses a variable from the symbol table
+* for the values, it creates a new instance of Value givin as parameters the value received and a <Type::type>
+*/
+expression:	T_WORD { $$ = symTab.useVariable($1); }
+			| T_INT { $$ = new AST::Value($1, Type::integer); }
+			| T_REAL { $$ = new AST::Value($1, Type::real); }
+			| T_BOOL { $$ = new AST::Value($1, Type::boolean); }
+			| expression T_PLUS expression { $$ = new AST::BinOp($1, Operation::plus, $3); }
 			;
 
 

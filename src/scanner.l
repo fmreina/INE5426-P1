@@ -34,8 +34,8 @@ word[a-zA-Z]+
 "~"		{ return T_NOT; }	
 "AND"	{ return T_AND; }	
 "OR"	{ return T_OR; }	
-"TRUE"	{ return T_BOOL; }	
-"FALSE"	{ return T_BOOL; }	
+"TRUE"	{ yylval.string = strdup(yytext); return T_BOOL; }	
+"FALSE"	{ yylval.string = strdup(yytext); return T_BOOL; }	
 
 ","		{ return T_COMMA; }
 ":"		{ return T_COLON; }

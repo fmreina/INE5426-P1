@@ -25,10 +25,9 @@ namespace ST {
 		public:
 			Type::Type type;
 			Kind kind;
-			int64_t value; // space to store values while doing interpretation
 			bool initialized;
-			Symbol( Type::Type type, Kind kind, int64_t value, bool initialized ) : type(type), kind(kind), value(value), initialized(initialized) { }
-			Symbol( ) {type = Type::integer; kind = variable; value = 0; initialized = false; }
+			Symbol( Type::Type type, Kind kind, bool initialized ) : type(type), kind(kind), initialized(initialized) { }
+			Symbol( ) {type = Type::integer; kind = variable; initialized = false; }
 	};
 
 	class SymbolTable {
@@ -38,7 +37,7 @@ namespace ST {
 			bool checkId( std::string id ) { return entryList.find(id) != entryList.end(); } // @return true if variable was defined
 			void addSymbol(std::string id, Symbol newSymbol) { entryList[id] = newSymbol; }
 			// AST::Node* newVariable( std::string id, AST::Node* next);
-			AST::Node* newVariable( std::string id, AST::Node* next, Type::Type type);
+			AST::Node* newVariable( std::string id, Type::Type type);
 			AST::Node* assignVariable(std::string id);
 			AST::Node* useVariable(std::string id);
 	};

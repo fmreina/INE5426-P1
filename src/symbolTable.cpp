@@ -11,29 +11,37 @@ using namespace ST;
 
 extern SymbolTable symTab;
 
-AST::Node* SymbolTable::newVariable( std::string id, AST::Node* next, Type::Type type){
+AST::Node* SymbolTable::newVariable( std::string id, Type::Type type){
 	if( checkId(id) ) yyerror("Variable redefinition! %s\n", id.c_str());
 	else {
-		Symbol entry(type, variable, 0, false);  // FIXME: gets  only integer?
+		Symbol entry(type, variable, false);  // FIXME: gets  only integer?
 		addSymbol( id, entry );
 	}
-	std::cout << "Variavel criada. tipo: " << type << endl;
-	std::cout<<"["<<id<<"]= "<<symTab.entryList[id].value<<endl;
+	// std::cout << "Variavel criada. tipo: " << type << endl;
+	// std::cout<<"["<<id<<"]= "<<symTab.entryList[id].value<<endl;
 
 	return new AST::Word( id, type );
 }
 
 AST::Node* SymbolTable::assignVariable( std::string id ){
+	Type::Type type;
 	if( !checkId(id) ) yyerror("Variable not defined yet! %s\n", id.c_str());
-	entryList[id].initialized = true;
-	// return new AST::Word( id, NULL );
+	else{
+		type = entryList[id].type;
+		entryList[id].initialized = true;
+		return new AST::Word( id, type);
+	}
 	return 0;
 }
 
 AST::Node* SymbolTable::useVariable( std::string id ){
+	Type::Type type;
 	if( !checkId(id) ) yyerror("Variable not defined yet! %s\n", id.c_str());
-	if( !entryList[id].initialized ) yyerror("Variable not initialized yet! %s\n", id.c_str());
-	// return new AST::Word( id, NULL );
+	else{
+		Type::Type type;
+		if( !entryList[id].initialized ) yyerror("Variable not initialized yet! %s\n", id.c_str());
+		return new AST::Word( id, type );
+	}
 	return 0;
 }
 
