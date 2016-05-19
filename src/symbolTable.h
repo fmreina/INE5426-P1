@@ -16,11 +16,16 @@ extern void yyerror(const char* s, ...);
 namespace ST {
 	class Symbol;
 
-	// enum Type { integer, real, boolean };
 	enum Kind { variable };
 
 	typedef std::map<std::string, Symbol> SymbolList; // set of symbols
 
+	/*
+	 *	@class Symbol to define a symbol 
+	 *	@param Type::Type form the staff.h to indicate the type of the node ( integer, real, boolean )
+	 *	@param Kind (variable)
+	 *	@param initialized to indicate wether the variable was initialized or not
+	 */
 	class Symbol {
 		public:
 			Type::Type type;
@@ -30,13 +35,21 @@ namespace ST {
 			Symbol( ) {type = Type::integer; kind = variable; initialized = false; }
 	};
 
+	/*
+	 *	@class SymbolTable to create a symbol table
+	 *	@param SymbolList - map of symbols
+	 *	@method checkId @param std::string @return boolean  checks if a symbol is already in the enryList map
+	 *	@method addSymbol @param std::string, Symbol @return void  adds a new symbol in the entryList map
+	 *	@method newVariable @param std::string Type::Type @return AST::Node  creates a new node for the variable
+	 *	@method assignVariable @param std::string @return AST::Node  makes an assignment to the given variable
+	 *	@method useVariable @param std:string @return AST::Node  retrieve a variable from symbol of the entryList
+	 */
 	class SymbolTable {
 		public:
 			SymbolList entryList;
 			SymbolTable(){}
 			bool checkId( std::string id ) { return entryList.find(id) != entryList.end(); } // @return true if variable was defined
 			void addSymbol(std::string id, Symbol newSymbol) { entryList[id] = newSymbol; }
-			// AST::Node* newVariable( std::string id, AST::Node* next);
 			AST::Node* newVariable( std::string id, Type::Type type);
 			AST::Node* assignVariable(std::string id);
 			AST::Node* useVariable(std::string id);

@@ -1,3 +1,4 @@
+// Parser - references as shown on README.md
 %{
 	#include "ast.h"
 	#include "symbolTable.h"
@@ -99,7 +100,7 @@
  
 %%
 /*
- * Grammar structure as presented by llpilla 
+ * Grammar structure as presented by llpilla @github
  */
 
 /*
@@ -161,7 +162,7 @@ target: T_WORD { $$ = symTab.assignVariable($1); }
 		;
 
 /*
-* decalres a expression as being a variable, or a value, or an operation between two expressions
+* decalres a expression as being a variable, or a value, or an operation between two expressions, or a minus/negation operation of an expression
 * for T_WORD, it uses a variable from the symbol table
 * for the values, it creates a new instance of Value givin as parameters the value received and a <Type::type>
 */
@@ -170,8 +171,19 @@ expression:	T_WORD { $$ = symTab.useVariable($1); }
 			| T_REAL { $$ = new AST::Value($1, Type::real); }
 			| T_BOOL { $$ = new AST::Value($1, Type::boolean); }
 			| expression T_PLUS expression { $$ = new AST::BinOp($1, Operation::plus, $3); }
+			| expression T_MINUS expression { $$ = new AST::BinOp($1, Operation::minus, $3); }
+			| expression T_TIMES expression { $$ = new AST::BinOp($1, Operation::times, $3); }
+			| expression T_DIVIDE expression { $$ = new AST::BinOp($1, Operation::divide, $3); }
+			| expression T_GREATER expression { $$ = new AST::BinOp($1, Operation::greater, $3); }
+			| expression T_GREATER_EQUALS expression { $$ = new AST::BinOp($1, Operation::greater_equals, $3); }
+			| expression T_SMALLER expression { $$ = new AST::BinOp($1, Operation::smaller, $3); }
+			| expression T_SMALLER_EQUALS expression { $$ = new AST::BinOp($1, Operation::smaller_equals, $3); }
+			| expression T_EQUALS expression { $$ = new AST::BinOp($1, Operation::equals, $3); }
+			| expression T_DIFFERENT expression { $$ = new AST::BinOp($1, Operation::different, $3); }
+			| expression T_AND expression { $$ = new AST::BinOp($1, Operation::and_op, $3); }
+			| expression T_OR expression { $$ = new AST::BinOp($1, Operation::or_op, $3); }
+			| T_NOT expression { $$ = new AST::UnOp(Operation::not_op, $2); }
+			| T_MINUS expression { $$ = new AST::UnOp(Operation::minus, $2); }
 			;
 
-
 %%
- 	

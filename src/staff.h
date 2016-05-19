@@ -13,6 +13,10 @@
 using namespace std;
 
 extern void yyerrer(const char *s, ...);
+
+/*
+ *	ebuneration for the possible types of varialbe
+ */
 namespace Type {
 
 	enum Type { 
@@ -24,6 +28,9 @@ namespace Type {
 	static Type lastType;
 }
 
+/*
+ *	enumeration for the possible kinds of operation
+ */
 namespace Operation{
 
 	enum Operation { 

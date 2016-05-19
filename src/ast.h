@@ -12,8 +12,6 @@
 #include "staff.h"
 
 using namespace std;
-//using namespace Type;
-//using namespace Operation;
 
 extern void yyerrer(const char *s, ...);
 namespace AST {
@@ -28,7 +26,7 @@ namespace AST {
 	/*
 	 *	@class Node to define a node of the syntax tree
 	 *	@param Type::Type form the staff.h to indicate the type of the node ( integer, real, boolean )
-	 *	@method printTree is used to print the tree
+	 *	@method printTree is used to print the tree	 @return void
 	 */
 	class Node {
 		public:
@@ -43,7 +41,7 @@ namespace AST {
 	 *	@class Block to work with a block structure
 	 *	@attribute NodeList (list of lines)
 	 *	@param none
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	class Block : public Node {
 		public:
@@ -55,7 +53,7 @@ namespace AST {
 	/*
 	 *	@class BinOp to work with binary operation ( +, *, =, ~=, ... )
 	 *	@param Node, Operation::Operation, Node
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	class BinOp : public Node {
 		public:
@@ -69,7 +67,7 @@ namespace AST {
 	/*
 	 *	@class UnOp to work with unary operation ( -, ~, := )
 	 *	@param Operation::Operation, Node
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	class UnOp : public Node {
 		public:
@@ -82,7 +80,7 @@ namespace AST {
 	/*
 	 *	@class Word to work with strings (declare variables)
 	 *	@param std::string, Type::Type (type is assigned to the Node)
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	class Word : public Node {
 		public:
@@ -95,7 +93,7 @@ namespace AST {
 	/*
 	 *	@class Value to receive numerical values
 	 *	@param std::string, Type::Type (type is assigned to the Node)
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	class Value : public Node {
 		public:
@@ -109,7 +107,7 @@ namespace AST {
 	 *	@class VariableDeclaration to receive numerical values
 	 *	@attribute NodeList (list of variables)
 	 *	@param Type::Type (type is assigned to the Node)
-	 *	@method printTree
+	 *	@method printTree  @return void
 	 */
 	 class VariableDeclaration : public Node {
 	 	public:
