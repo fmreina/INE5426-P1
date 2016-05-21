@@ -35,6 +35,8 @@ namespace AST {
 			Node (Type::Type type) : type(type) { }
 			Node () { }
 			virtual void printTree() { }
+			Node* coerce(Node* node);
+			bool needCoersion(Type::Type a, Type::Type b);
 	};
 
 	/*
@@ -105,7 +107,7 @@ namespace AST {
 
 	/*
 	 *	@class VariableDeclaration to receive numerical values
-	 *	@attribute NodeList (list of variables)
+	 *	@attribute NodeList (list of variables), Type::Type
 	 *	@param Type::Type (type is assigned to the Node)
 	 *	@method printTree  @return void
 	 */
@@ -116,4 +118,28 @@ namespace AST {
 	 		VariableDeclaration (Type::Type type) : type(type), Node(type) { }
 	 		void printTree();
 	 };
+
+	 /*
+	 *	@class ArrayDeclaration
+	 *	@attribute NodeList (list of variables)
+	 *	@param Type::Type (type is assigned to the Node), std::string (size of the array)
+	 *	@method printTree  @return void
+	 */
+	 class ArrayDeclaration : public Node {
+	 	public:
+	 		std::string size;
+	 		Type::Type type;
+	 		NodeList variables;
+	 		ArrayDeclaration (Type::Type type, std::string size) : type(type), size(size), Node(type) { }
+	 		void printTree();
+	 };
+}
+
+namespace Array{
+
+	/*
+	 *	stores the declared size of the array
+	 */
+	static std::string lastSize;
+
 }

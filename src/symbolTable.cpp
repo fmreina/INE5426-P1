@@ -52,4 +52,3 @@ AST::Node* SymbolTable::useVariable( std::string id ){
 	}
 	return 0;
 }
-

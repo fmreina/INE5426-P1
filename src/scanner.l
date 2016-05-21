@@ -48,6 +48,8 @@ word[a-zA-Z]+
 ";"		{ return T_SEMICOLON; } // semicolon indicates the end of the current line.
 "("		{ return T_OPEN_PARENTHESIS; }
 ")"		{ return T_CLOSE_PARENTHESIS; }
+"["		{ return T_OPEN_BRACKETS; }
+"]"		{ return T_CLOSE_BRACKETS; }
 
 "int"	{ return T_TYPE_INT; }
 "real"	{ return T_TYPE_REAL; }

@@ -14,11 +14,11 @@ using namespace std;
 
 extern void yyerrer(const char *s, ...);
 
-/*
- *	ebuneration for the possible types of varialbe
- */
 namespace Type {
 
+	/*
+	 *	ebuneration for the possible types of varialbe
+	 */
 	enum Type { 
 		integer, 
 		real, 
@@ -28,11 +28,11 @@ namespace Type {
 	static Type lastType;
 }
 
-/*
- *	enumeration for the possible kinds of operation
- */
 namespace Operation{
 
+	/*
+	 *	enumeration for the possible kinds of operation
+	 */
 	enum Operation { 
 		plus, 
 		minus, 
