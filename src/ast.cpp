@@ -5,8 +5,6 @@
  *	 - Aho, Alfred, et al - Compilers: principles, techniques, and tools - 2nd ed. 2007 Pearson Education
  *	 - Levine, John - Flex & Bison - Unix text processing tools - 2009 O'Reilly Media
  */
-#define PRINTER_H
-#include "printer.h"
 
 #include "ast.h"
 #include "symbolTable.h"
@@ -76,12 +74,43 @@ void Word::printTree(){
  }
 
 /*
- *	prints the value in the following format (using portuguese)
- *	valor <Type::Type> <std::string>
- *	exemple: valor boolean TRUE
+ *	prints the value declaration in the following format (using portuguese)
+ *	Declaracão de variável <Type::Type> <std::string>: <list of variables>
+ *	exemple: Declaracão de variável <inteira>: <variable>
  */
  void VariableDeclaration::printTree(){
  	std::cout << "Declaracão de variável " << type << ": ";
+ 	for( auto var = variables.begin(); var != variables.end(); var ++){
+ 		std::cout << dynamic_cast<Word *>(*var)->word;
+ 		if(next(var) != variables.end())
+ 			std::cout << ", ";
+ 	}
+ }
+
+/*
+ *	Method to make the coersion from integer to real when needed
+ */
+ Node* Node::coerce(Node* node){
+ 	if(this->needCoersion(this->type, node->type)){
+ 		std::cout<<"To implement coersion";
+ 	}
+ 	return 0;
+ }
+
+/*
+ *	check if needs to make a coersion. If this->node is integer and the other is real return true.
+ */
+ bool Node::needCoersion(Type::Type a, Type::Type b){
+ 	return(a == Type::integer && b == Type::real);
+ }
+
+/*
+ *	prints the array declaration in the following format (using portuguese)
+ *	Declaracão de arranjo <Type::Type> de tamanho <std::string>: <std::string>
+ *	exemple: Declaracão de arranjo <inteiro> de tamanho <10>: <arr>
+ */
+ void ArrayDeclaration::printTree(){
+ 	std::cout << "Declaracão de arranjo " << type << " de tamanho "<< size <<": ";
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
