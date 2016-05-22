@@ -27,6 +27,8 @@ namespace AST {
 	 *	@class Node to define a node of the syntax tree
 	 *	@param Type::Type form the staff.h to indicate the type of the node ( integer, real, boolean )
 	 *	@method printTree is used to print the tree	 @return void
+	 *	@method coerce  @return Node*	coerces this node to real if needed
+	 *	@method needCoersion  @return bool 	checks if this node needs coercion
 	 */
 	class Node {
 		public:
@@ -131,6 +133,20 @@ namespace AST {
 	 		Type::Type type;
 	 		NodeList variables;
 	 		ArrayDeclaration (Type::Type type, std::string size) : type(type), size(size), Node(type) { }
+	 		void printTree();
+	 };
+
+	 /*
+	  *	@class Coercion
+	  *	@attribute Node
+	  *	@param Node
+	  *	@method printTree  @return void
+	  *	it sets the node type to <Type::real>
+	  */
+	 class Coercion : public Node {
+	 	public:
+	 		Node* node;
+	 		Coercion(Node* node) : node(node), Node(Type::real) { }
 	 		void printTree();
 	 };
 }

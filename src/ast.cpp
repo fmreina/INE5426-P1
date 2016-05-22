@@ -88,17 +88,17 @@ void Word::printTree(){
  }
 
 /*
- *	Method to make the coersion from integer to real when needed
+ *	Method to make the coercion from integer to real when needed
  */
  Node* Node::coerce(Node* node){
  	if(this->needCoersion(this->type, node->type)){
- 		std::cout<<"To implement coersion";
+ 		return new AST::Coercion(this);
  	}
- 	return 0;
+ 	return this;
  }
 
 /*
- *	check if needs to make a coersion. If this->node is integer and the other is real return true.
+ *	check if needs to make a coercion. If this->node is integer and the other is real return true.
  */
  bool Node::needCoersion(Type::Type a, Type::Type b){
  	return(a == Type::integer && b == Type::real);
@@ -116,4 +116,12 @@ void Word::printTree(){
  		if(next(var) != variables.end())
  			std::cout << ", ";
  	}
+ }
+
+/*
+ *	prints the coercion to real when needed
+ */
+ void Coercion::printTree(){
+ 	node->printTree();
+ 	std::cout << " para real";
  }
