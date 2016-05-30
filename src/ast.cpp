@@ -28,58 +28,105 @@ void Block::printTree(){
 
 /*
  *	prints the binary operation in the following format
- *	( <Node> (<Operation::Operation> <Type::Type>) <Node>)
+ *	( <Node> (<OPERATION::Operation> <TYPE::Type>) <Node>)
  *	example: ( 2 (sum real) 3)
  */
 void BinOp::printTree(){
-	std::cout << "(";
-	left->printTree();
-	std::cout << " (" << op << " " << type << ") ";
-	right->printTree();
-	std::cout << ")";
+	switch(op){
+		case OPERATION::assign:
+			if(left->size == NULL){
+				std::cout << "Atribuicão de valor para ";
+				left->printTree();
+				std::cout << ": ";
+				right->printTree();
+			}
+			else if(left->size != NULL){
+				std::cout << "Atribuicão de valor para arranjo "<<  TYPE::maleName[type] << " ";
+				left->printTree();
+				std::cout << " {+indice: ";
+				left->size->printTree();
+				std::cout << "}:";
+				right->printTree();
+			}
+			break;
+		default:
+			std::cout << "(";
+			left->printTree();
+			std::cout << " (" << OPERATION::name[op] << " ";
+			if(OPERATION::maleGender[op]){
+				std::cout<< TYPE::maleName[type] << ") ";	
+			} else{
+				std::cout<< TYPE::femaleName[type] << ") ";	
+			}
+			right->printTree();
+			std::cout << ")";
+			break;
+	}
 	return;
 }
 
 /*
  *	prints the unary operation in the following format
- *	((<Operation::Operation> <Type::Type>) <Node>)
+ *	((<OPERATION::Operation> <TYPE::Type>) <Node>)
  *	example: ((negation boolean) true)
  */
 void UnOp::printTree(){
-	std::cout << "(";
-	std::cout << "(" << op << " " << type << ") ";
-	node->printTree();
-	std::cout << ")";
+	switch(op){
+		case OPERATION::parenthesis:
+			std::cout << "(abre parenteses) ";
+            node->printTree();
+            std::cout << " (fecha parenteses)";
+			break;
+		default:
+			std::cout << "(";
+			std::cout << "(" << OPERATION::name[op] << " ";
+			if(OPERATION::maleGender[op]){
+				std::cout<< TYPE::maleName[type] << ") ";	
+			} else{
+				std::cout<< TYPE::femaleName[type] << ") ";	
+			}
+			node->printTree();
+			std::cout << ")";
+			break;
+	}
 	return;
 }
 
 /*
  *	prints the variable in the following format (using portuguese)
- *	variável <Type::Type> <std::string>
+ *	variável <TYPE::Type> <std::string>
  *	exemple: variável boolean flag
  */
 void Word::printTree(){
-	std::cout << "variável " << type << " " << word;
+	if(size == NULL){
+		// if(type==TYPE::integer && type==TYPE::real && type==TYPE::boolean){
+		// 	std::cout << "variável " << TYPE::femaleName[type] << " " << word;
+		// } 
+		std::cout << "variável " << word;
+	}
+	else{
+		std::cout << word;	
+	}
 	return;
 }
 
 /*
  *	prints the value in the following format (using portuguese)
- *	valor <Type::Type> <std::string>
+ *	valor <TYPE::Type> <std::string>
  *	exemple: valor boolean TRUE
  */
  void Value::printTree(){
- 	std::cout << "valor " << type << " " << value;
+ 	std::cout << "valor " << TYPE::maleName[type] << " " << value;
  	return;
  }
 
 /*
  *	prints the value declaration in the following format (using portuguese)
- *	Declaracão de variável <Type::Type> <std::string>: <list of variables>
+ *	Declaracão de variável <TYPE::Type> <std::string>: <list of variables>
  *	exemple: Declaracão de variável <inteira>: <variable>
  */
  void VariableDeclaration::printTree(){
- 	std::cout << "Declaracão de variável " << type << ": ";
+ 	std::cout << "Declaracão de variável "<< TYPE::femaleName[type] << ": ";
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
@@ -92,25 +139,27 @@ void Word::printTree(){
  */
  Node* Node::coerce(Node* node){
  	if(this->needCoersion(this->type, node->type)){
+ 		type = TYPE::real;
  		return new AST::Coercion(this);
  	}
+ 	type = TYPE::integer;
  	return this;
  }
 
 /*
  *	check if needs to make a coercion. If this->node is integer and the other is real return true.
  */
- bool Node::needCoersion(Type::Type a, Type::Type b){
- 	return(a == Type::integer && b == Type::real);
+ bool Node::needCoersion(TYPE::Type a, TYPE::Type b){
+ 	return(a == TYPE::integer && b == TYPE::real);
  }
 
 /*
  *	prints the array declaration in the following format (using portuguese)
- *	Declaracão de arranjo <Type::Type> de tamanho <std::string>: <std::string>
+ *	Declaracão de arranjo <TYPE::Type> de tamanho <std::string>: <std::string>
  *	exemple: Declaracão de arranjo <inteiro> de tamanho <10>: <arr>
  */
  void ArrayDeclaration::printTree(){
- 	std::cout << "Declaracão de arranjo " << type << " de tamanho "<< size <<": ";
+ 	std::cout << "Declaracão de arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())

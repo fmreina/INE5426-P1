@@ -25,20 +25,21 @@ namespace AST {
 
 	/*
 	 *	@class Node to define a node of the syntax tree
-	 *	@param Type::Type form the staff.h to indicate the type of the node ( integer, real, boolean )
+	 *	@param TYPE::Type form the staff.h to indicate the type of the node ( integer, real, boolean )
 	 *	@method printTree is used to print the tree	 @return void
 	 *	@method coerce  @return Node*	coerces this node to real if needed
 	 *	@method needCoersion  @return bool 	checks if this node needs coercion
 	 */
 	class Node {
 		public:
-			Type::Type type;
+			TYPE::Type type = TYPE::unknown;
+			Node* size;
 			virtual ~Node() { }
-			Node (Type::Type type) : type(type) { }
+			Node (TYPE::Type type) : type(type) { }
 			Node () { }
 			virtual void printTree() { }
 			Node* coerce(Node* node);
-			bool needCoersion(Type::Type a, Type::Type b);
+			bool needCoersion(TYPE::Type a, TYPE::Type b);
 	};
 
 	/*
@@ -56,83 +57,83 @@ namespace AST {
 
 	/*
 	 *	@class BinOp to work with binary operation ( +, *, =, ~=, ... )
-	 *	@param Node, Operation::Operation, Node
+	 *	@param Node, OPERATION::Operation, Node
 	 *	@method printTree  @return void
 	 */
 	class BinOp : public Node {
 		public:
-			Operation::Operation op;
+			OPERATION::Operation op;
 			Node *left;
 			Node *right;
-			BinOp(Node *left, Operation::Operation op, Node *right) : left(left), op(op), right(right) { }
+			BinOp(Node *left, OPERATION::Operation op, Node *right) : left(left), op(op), right(right) { type = TYPE::getBinType(left->type, op, right->type); }
 			void printTree();
 	};
 
 	/*
 	 *	@class UnOp to work with unary operation ( -, ~, := )
-	 *	@param Operation::Operation, Node
+	 *	@param OPERATION::Operation, Node
 	 *	@method printTree  @return void
 	 */
 	class UnOp : public Node {
 		public:
-			Operation::Operation op;
+			OPERATION::Operation op;
 			Node *node;
-			UnOp(Operation::Operation op, Node *node) : node(node), op(op) { }
+			UnOp(OPERATION::Operation op, Node *node) : node(node), op(op) { TYPE::getUnType(node->type, op); }
 			void printTree();
 	};
 
 	/*
 	 *	@class Word to work with strings (declare variables)
-	 *	@param std::string, Type::Type (type is assigned to the Node)
+	 *	@param std::string, TYPE::Type (type is assigned to the Node)
 	 *	@method printTree  @return void
 	 */
 	class Word : public Node {
 		public:
 			std::string word;
-			Type::Type type;
-			Word(std::string word, Type::Type type) : word(word), type(type), Node(type) { }
+			TYPE::Type type;
+			Word(std::string word, TYPE::Type type) : word(word), type(type), Node(type) { }
 			void printTree();
 	};
 
 	/*
 	 *	@class Value to receive numerical values
-	 *	@param std::string, Type::Type (type is assigned to the Node)
+	 *	@param std::string, TYPE::Type (type is assigned to the Node)
 	 *	@method printTree  @return void
 	 */
 	class Value : public Node {
 		public:
 			std::string value;
-			Type::Type type;
-			Value(std::string value, Type::Type type) : value(value), type(type), Node(type) { }
+			TYPE::Type type;
+			Value(std::string value, TYPE::Type type) : value(value), type(type), Node(type) { }
 			void printTree();
 	};
 
 	/*
 	 *	@class VariableDeclaration to receive numerical values
-	 *	@attribute NodeList (list of variables), Type::Type
-	 *	@param Type::Type (type is assigned to the Node)
+	 *	@attribute NodeList (list of variables), TYPE::Type
+	 *	@param TYPE::Type (type is assigned to the Node)
 	 *	@method printTree  @return void
 	 */
 	 class VariableDeclaration : public Node {
 	 	public:
-	 		Type::Type type;
+	 		TYPE::Type type;
 	 		NodeList variables;
-	 		VariableDeclaration (Type::Type type) : type(type), Node(type) { }
+	 		VariableDeclaration (TYPE::Type type) : type(type), Node(type) { }
 	 		void printTree();
 	 };
 
 	 /*
 	 *	@class ArrayDeclaration
 	 *	@attribute NodeList (list of variables)
-	 *	@param Type::Type (type is assigned to the Node), std::string (size of the array)
+	 *	@param TYPE::Type (type is assigned to the Node), std::string (size of the array)
 	 *	@method printTree  @return void
 	 */
 	 class ArrayDeclaration : public Node {
 	 	public:
 	 		std::string size;
-	 		Type::Type type;
+	 		TYPE::Type type;
 	 		NodeList variables;
-	 		ArrayDeclaration (Type::Type type, std::string size) : type(type), size(size), Node(type) { }
+	 		ArrayDeclaration (TYPE::Type type, std::string size) : type(type), size(size), Node(type) { }
 	 		void printTree();
 	 };
 
@@ -146,7 +147,7 @@ namespace AST {
 	 class Coercion : public Node {
 	 	public:
 	 		Node* node;
-	 		Coercion(Node* node) : node(node), Node(Type::real) { }
+	 		Coercion(Node* node) : node(node), Node(TYPE::real) { }
 	 		void printTree();
 	 };
 }
