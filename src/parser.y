@@ -24,6 +24,7 @@
 	AST::Block *block;
 	AST::VariableDeclaration *var;
 	AST::ArrayDeclaration *arr;
+	AST::FunctionDeclaration *fun;
 }
 
 /*
@@ -56,6 +57,9 @@
 %token T_TYPE_INT
 %token T_TYPE_REAL
 %token T_TYPE_BOOL
+%token T_DECL_FUNCTION
+%token T_DEF_FUNCTION
+%token T_END_FUNCTION
 
 %token T_ASSIGN
 %token T_COMMA
@@ -83,6 +87,8 @@
 %type <string> size
 %type <arr> array_list
 %type <node> target_array
+%type <fun> function_list;
+%type <node> def_func
  
 /*
  *	Operator precedence for mathematical operators
@@ -106,7 +112,7 @@
  
 %%
 /*
- *	Grammar structure as presented by llpilla @github
+ *	Grammar structure based on the example presented by llpilla @github
  */
 
 /*
@@ -128,6 +134,7 @@ lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  */ 		
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
+		| def_func
 		;
 
 /*
@@ -136,6 +143,7 @@ line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
  */
 declaration :	type T_COLON variable_list { $$ = $3; }
 				| type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_list { $$ = $6; }
+				| T_DECL_FUNCTION type T_COLON function_list { $$ = $4; }
 				;
 
 /*
@@ -192,7 +200,8 @@ expression:	T_WORD { $$ = symTab.useVariable($1); }
 			| expression T_OR expression { $$ = new AST::BinOp($1, OPERATION::or_op, $3); }
 			| T_NOT expression { $$ = new AST::UnOp(OPERATION::not_op, $2); }
 			| T_MINUS expression %prec U_NEGATIVE { $$ = new AST::UnOp(OPERATION::u_minus, $2); }
-			| T_OPEN_PARENTHESIS expression T_CLOSE_PARENTHESIS { $$ = $2; }			
+			| T_OPEN_PARENTHESIS expression T_CLOSE_PARENTHESIS { $$ = $2; }	
+			| target_array { $$ = $1; }		
 			;
 
 /*
@@ -212,4 +221,14 @@ array_list: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::lastS
 
 target_array: T_WORD T_OPEN_BRACKETS expression T_CLOSE_BRACKETS { $$ = symTab.assignVariable($1); $$->size = $3; }
 			 ;
+
+function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
+					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType)); }
+				| function_list T_COMMA T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = $1;
+			 							  												$$->funcs.push_back(symTab.newVariable($3, TYPE::lastType)); }
+				;
+
+def_func: T_INT {  Array::lastSize = $1; }
+		;
+
 %%

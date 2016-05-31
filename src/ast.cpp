@@ -34,31 +34,63 @@ void Block::printTree(){
 void BinOp::printTree(){
 	switch(op){
 		case OPERATION::assign:
+
+			// check if it's an array or not
 			if(left->size == NULL){
 				std::cout << "Atribuicão de valor para ";
 				left->printTree();
 				std::cout << ": ";
-				right->printTree();
-			}
-			else if(left->size != NULL){
+			}else if(left->size != NULL){
 				std::cout << "Atribuicão de valor para arranjo "<<  TYPE::maleName[type] << " ";
 				left->printTree();
 				std::cout << " {+indice: ";
 				left->size->printTree();
-				std::cout << "}:";
+				std::cout << "}: ";
+			}
+
+			// check if it's an array or not
+			if(right->size == NULL){
+				right->printTree();	
+			}else if(right->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
 				right->printTree();
+				std::cout << " {+indice: ";
+				right->size->printTree();
+				std::cout << "}: ";
 			}
 			break;
 		default:
 			std::cout << "(";
-			left->printTree();
+			
+			// check if it's an array or not
+			if(left->size == NULL){
+				left->printTree();
+			} else if(left->size != NULL){ 
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				left->printTree();
+				std::cout << " {+indice: ";
+				left->size->printTree();
+				std::cout << "}";
+			}
 			std::cout << " (" << OPERATION::name[op] << " ";
+			
 			if(OPERATION::maleGender[op]){
 				std::cout<< TYPE::maleName[type] << ") ";	
-			} else{
+			} else {
 				std::cout<< TYPE::femaleName[type] << ") ";	
 			}
-			right->printTree();
+			
+			// check if it's an array or not
+			if(right->size == NULL){
+				right->printTree();
+			} else if(right->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				right->printTree();
+				std::cout << " {+indice: ";
+				right->size->printTree();
+				std::cout << "}";
+			}
+			
 			std::cout << ")";
 			break;
 	}
@@ -74,7 +106,18 @@ void UnOp::printTree(){
 	switch(op){
 		case OPERATION::parenthesis:
 			std::cout << "(abre parenteses) ";
-            node->printTree();
+            // node->printTree();
+			// check if it's an array or not
+            if(node->size == NULL){
+				node->printTree();
+			} else if(node->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				node->printTree();
+				std::cout << " {+indice: ";
+				node->size->printTree();
+				std::cout << "}";
+			}
+            
             std::cout << " (fecha parenteses)";
 			break;
 		default:
@@ -85,7 +128,17 @@ void UnOp::printTree(){
 			} else{
 				std::cout<< TYPE::femaleName[type] << ") ";	
 			}
-			node->printTree();
+			// node->printTree();
+			// check if it's an array or not
+            if(node->size == NULL){
+				node->printTree();
+			} else if(node->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				node->printTree();
+				std::cout << " {+indice: ";
+				node->size->printTree();
+				std::cout << "}";
+			}
 			std::cout << ")";
 			break;
 	}
@@ -173,4 +226,18 @@ void Word::printTree(){
  void Coercion::printTree(){
  	node->printTree();
  	std::cout << " para real";
+ }
+
+/*
+ *	prints the function declaration in the following format (using portuguese)
+ *	
+ *	
+ */
+ void FunctionDeclaration::printTree(){
+ 	std::cout << "Declaracão de funcão " << TYPE::maleName[type] << ": ";
+ 	for( auto var = funcs.begin(); var != funcs.end(); var ++){
+ 		std::cout << dynamic_cast<Word *>(*var)->word;
+ 		if(next(var) != funcs.end())
+ 			std::cout << ", ";
+ 	}
  }

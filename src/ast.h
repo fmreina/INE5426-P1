@@ -150,6 +150,20 @@ namespace AST {
 	 		Coercion(Node* node) : node(node), Node(TYPE::real) { }
 	 		void printTree();
 	 };
+	 
+	 /*
+	 *	@class FunctionDeclaration
+	 *	@attribute NodeList (list of functions)
+	 *	@param TYPE::Type (type is assigned to the Node)
+	 *	@method printTree  @return void
+	 */
+	 class FunctionDeclaration : public Node {
+	 	public:
+	 		TYPE::Type type;
+	 		NodeList funcs;
+	 		FunctionDeclaration (TYPE::Type type) : type(type), Node(type) { }
+	 		void printTree();
+	 };
 }
 
 namespace Array{
