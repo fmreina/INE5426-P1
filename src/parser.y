@@ -60,6 +60,7 @@
 %token T_DECL_FUNCTION
 %token T_DEF_FUNCTION
 %token T_END_FUNCTION
+%token T_RETURN
 
 %token T_ASSIGN
 %token T_COMMA
@@ -250,7 +251,5 @@ array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::last
 					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 			;
 
-def_func: T_INT {  Array::lastSize = $1; }
-		;
-
 %%
+
