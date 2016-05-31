@@ -138,7 +138,7 @@ lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  */ 		
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
-		| def_func
+		| def_func T_NEW_LINE
 		;
 
 /*
@@ -251,5 +251,6 @@ array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::last
 					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 			;
 
+def_func: T_DEF_FUNCTION { std::cout<< "The function definition needs to be inplemented yet"<<endl; };
 %%
 
