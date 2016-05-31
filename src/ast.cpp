@@ -262,3 +262,26 @@ void Word::printTree(){
  	}
  	std::cout << "\nFim declaracao";
  }
+
+/*
+ *	prints the if  block
+ */
+void IfBlock::printTree(){
+	std::cout<<"Expressão condicional"<<endl;
+	std::cout<<"+se: ";
+	condition->printTree();
+	std::cout<<endl;
+	std::cout<<"+então: ";
+	std::cout<<endl;
+	for (Node* line: thenLines) {
+		line->printTree();
+	}
+	if(hasElse){
+		std::cout<<"+senão: ";
+		std::cout<<endl;
+		for (Node* line: elseLines) {
+			line->printTree();
+		}
+	}
+	std::cout<<"Fim expressão condicional";
+}
