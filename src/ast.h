@@ -172,7 +172,7 @@ namespace AST {
 	 /*
 	 *	@class IfBlock to work with a block structure
 	 *	@attribute NodeList (list of lines), Node*, bool
-	 *	@param none
+	 *	@param Node*
 	 *	@method printTree  @return void
 	 */
 	class IfBlock : public Node {
@@ -182,6 +182,20 @@ namespace AST {
 			Node* condition;
 			bool hasElse = false;
 			IfBlock(Node* condition) : condition(condition) { }
+			void printTree();
+	};
+
+	/*
+	 *	@class WhileBlock to work with a block structure
+	 *	@attribute NodeList (list of lines), Node*
+	 *	@param Node*
+	 *	@method printTree  @return void
+	 */
+	class WhileBlock : public Node {
+		public:
+			NodeList lines;
+			Node* condition;
+			WhileBlock(Node* condition) : condition(condition) { }
 			void printTree();
 	};
 }

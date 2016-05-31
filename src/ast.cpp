@@ -264,7 +264,7 @@ void Word::printTree(){
  }
 
 /*
- *	prints the if  block
+ *	prints the if block
  */
 void IfBlock::printTree(){
 	std::cout<<"Expressão condicional"<<endl;
@@ -284,4 +284,20 @@ void IfBlock::printTree(){
 		}
 	}
 	std::cout<<"Fim expressão condicional";
+}
+
+/*
+ *	prints the while block
+ */
+void WhileBlock::printTree(){
+	std::cout<<"Laco"<<endl;
+	std::cout<<"+enquanto: ";
+	condition->printTree();
+	std::cout<<endl;
+	std::cout<<"+faca: ";
+	std::cout<<endl;
+	for (Node* line: lines) {
+		line->printTree();
+	}
+	std::cout<<"Fim laco";
 }

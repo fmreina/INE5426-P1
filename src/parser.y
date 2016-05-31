@@ -26,6 +26,7 @@
 	AST::ArrayDeclaration *arr;
 	AST::FunctionDeclaration *fun;
 	AST::IfBlock *ifBlock;
+	AST::WhileBlock *whileBlock;
 }
 
 /*
@@ -66,6 +67,9 @@
 %token T_THEN
 %token T_ELSE
 %token T_END_IF
+%token T_WHILE
+%token T_DO
+%token T_END_WHILE
 
 %token T_ASSIGN
 %token T_COMMA
@@ -100,6 +104,7 @@
 %type <arr> array_param
 %type <node> scope
 %type <ifBlock> if_scope
+%type <whileBlock> while_scope
  
 /*
  *	Operator precedence for mathematical operators
@@ -278,6 +283,7 @@ array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::last
  *	declaration of scope
  */
 scope: if_scope { $$ = $1; }
+	 | while_scope { $$ = $1; }
 	 ;
 
 /*
@@ -291,6 +297,12 @@ if_scope: T_IF expression T_NEW_LINE T_THEN lines T_END_IF { $$ = new AST::IfBlo
 																		if($7 != NULL) $$->elseLines.push_back($7); }
 		;
 
+/*
+ *	declaration of while scope (loop)
+ */
+while_scope: T_WHILE expression T_NEW_LINE T_DO lines T_END_WHILE { $$ = new AST::WhileBlock($2); 
+																	if($5 != NULL) $$->lines.push_back($5); }
+			;
 /*
  *	the definition of functions still need to be implemented
  */
