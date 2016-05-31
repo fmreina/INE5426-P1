@@ -22,6 +22,7 @@ namespace AST {
 	 *	List of ASTs
 	 */
 	typedef std::vector<Node*> NodeList;
+	typedef std::vector<Node*> ParamList;
 
 	/*
 	 *	@class Node to define a node of the syntax tree
@@ -40,6 +41,8 @@ namespace AST {
 			virtual void printTree() { }
 			Node* coerce(Node* node);
 			bool needCoersion(TYPE::Type a, TYPE::Type b);
+			bool isParam = false;
+			ParamList params;
 	};
 
 	/*
@@ -150,7 +153,7 @@ namespace AST {
 	 		Coercion(Node* node) : node(node), Node(TYPE::real) { }
 	 		void printTree();
 	 };
-	 
+
 	 /*
 	 *	@class FunctionDeclaration
 	 *	@attribute NodeList (list of functions)
@@ -161,6 +164,7 @@ namespace AST {
 	 	public:
 	 		TYPE::Type type;
 	 		NodeList funcs;
+	 		
 	 		FunctionDeclaration (TYPE::Type type) : type(type), Node(type) { }
 	 		void printTree();
 	 };

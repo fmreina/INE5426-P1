@@ -87,8 +87,11 @@
 %type <string> size
 %type <arr> array_list
 %type <node> target_array
-%type <fun> function_list;
+%type <fun> function_list
 %type <node> def_func
+%type <node> parameters
+%type <var> variable_param
+%type <arr> array_param
  
 /*
  *	Operator precedence for mathematical operators
@@ -224,9 +227,28 @@ target_array: T_WORD T_OPEN_BRACKETS expression T_CLOSE_BRACKETS { $$ = symTab.a
 
 function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType)); }
+				| T_WORD T_OPEN_PARENTHESIS parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
+					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
+					 											$$->params.push_back($3); }
+				| T_WORD T_OPEN_PARENTHESIS parameters T_COMMA parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
+					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
+					 											$$->params.push_back($3); $$->params.push_back($5);}
 				| function_list T_COMMA T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = $1;
 			 							  												$$->funcs.push_back(symTab.newVariable($3, TYPE::lastType)); }
 				;
+
+parameters : type T_COLON variable_param { $$ = $3; }
+			| type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
+			| parameters T_COMMA parameters { $$ = $1; $$->params.push_back($3);}
+			;
+
+variable_param:	T_WORD { $$ = new AST::VariableDeclaration(TYPE::lastType);
+						 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
+				;
+
+array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::lastSize);
+					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
+			;
 
 def_func: T_INT {  Array::lastSize = $1; }
 		;

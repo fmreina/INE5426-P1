@@ -179,7 +179,11 @@ void Word::printTree(){
  *	exemple: Declaracão de variável <inteira>: <variable>
  */
  void VariableDeclaration::printTree(){
- 	std::cout << "Declaracão de variável "<< TYPE::femaleName[type] << ": ";
+ 	if(isParam){
+ 		std::cout << TYPE::maleName[type] << ": ";
+ 	}else{
+	 	std::cout << "Declaracão de variável "<< TYPE::femaleName[type] << ": ";
+ 	}
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
@@ -212,7 +216,11 @@ void Word::printTree(){
  *	exemple: Declaracão de arranjo <inteiro> de tamanho <10>: <arr>
  */
  void ArrayDeclaration::printTree(){
- 	std::cout << "Declaracão de arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
+ 	if(isParam){
+ 		std::cout << "arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
+ 	}else{
+ 		std::cout << "Declaracão de arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
+ 	}
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
@@ -234,10 +242,20 @@ void Word::printTree(){
  *	
  */
  void FunctionDeclaration::printTree(){
- 	std::cout << "Declaracão de funcão " << TYPE::maleName[type] << ": ";
+ 	std::cout << "Declaracão de funcão " << TYPE::femaleName[type] << ": ";
  	for( auto var = funcs.begin(); var != funcs.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != funcs.end())
  			std::cout << ", ";
  	}
+ 	std::cout << "\n+parametros: \n";
+ 	for( auto var = params.begin(); var != params.end(); var ++){
+ 		std::cout << "parametro ";
+ 		(*var)->isParam = true;
+ 		(*var)->printTree();
+ 		(*var)->isParam = false;
+ 		if(next(var) != params.end())
+ 			std::cout << "\n";
+ 	}
+ 	std::cout << "\nFim declaracao";
  }
