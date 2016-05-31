@@ -97,6 +97,8 @@
 %type <node> parameters
 %type <var> variable_param
 %type <arr> array_param
+%type <node> scope
+%type <node> if_scope
  
 /*
  *	Operator precedence for mathematical operators
@@ -142,6 +144,7 @@ lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
  */ 		
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
+		| scope T_NEW_LINE
 		| def_func T_NEW_LINE
 		;
 
@@ -270,6 +273,11 @@ array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::last
 					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 			;
 
+scope: if_scope { $$ = $1; }
+	 ;
+
+if_scope: T_IF expression T_THEN T_NEW_LINE lines T_END_IF { $$ = $5; }
+		;
 /*
  *	the definition of functions still need to be implemented
  */
