@@ -253,7 +253,7 @@ void Word::printTree(){
  	}
  	std::cout << "\n+parametros: \n";
  	for( auto var = params.begin(); var != params.end(); var ++){
- 		std::cout << "parametro ";
+ 		// std::cout << "parametro ";
  		(*var)->isParam = true;
  		(*var)->printTree();
  		(*var)->isParam = false;
@@ -261,6 +261,20 @@ void Word::printTree(){
  			std::cout << "\n";
  	}
  	std::cout << "\nFim declaracao";
+ }
+
+/*
+ *	prints each param in the list of params
+ */
+void Param::printTree(){
+ 	for( auto var = paramList.begin(); var != paramList.end(); var ++){
+ 		std::cout << "parametro ";
+ 		(*var)->isParam = true;
+ 		(*var)->printTree();
+ 		(*var)->isParam = false;
+ 		if(next(var) != paramList.end())
+ 			std::cout << "\n";
+ 	}
  }
 
 /*

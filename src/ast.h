@@ -42,7 +42,8 @@ namespace AST {
 			Node* coerce(Node* node);
 			bool needCoersion(TYPE::Type a, TYPE::Type b);
 			bool isParam = false;
-			ParamList params;
+			// ParamList params;
+			NodeList paramList;
 	};
 
 	/*
@@ -164,8 +165,23 @@ namespace AST {
 	 	public:
 	 		TYPE::Type type;
 	 		NodeList funcs;
-	 		
+	 		ParamList params;
 	 		FunctionDeclaration (TYPE::Type type) : type(type), Node(type) { }
+	 		void printTree();
+	 };
+
+	 /*
+	 *	@class FunctionDeclaration
+	 *	@attribute NodeList (list of functions)
+	 *	@param TYPE::Type (type is assigned to the Node)
+	 *	@method printTree  @return void
+	 */
+	 class Param : public Node {
+	 	public:
+	 		TYPE::Type type;
+	 		// NodeList paramList;
+	 		
+	 		Param (TYPE::Type type) : type(type), Node(type) { }
 	 		void printTree();
 	 };
 

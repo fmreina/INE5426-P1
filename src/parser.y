@@ -100,6 +100,7 @@
 %type <fun> function_list
 %type <node> def_func
 %type <node> parameters
+%type <node> param
 %type <var> variable_param
 %type <arr> array_param
 %type <node> scope
@@ -244,26 +245,27 @@ target_array: T_WORD T_OPEN_BRACKETS expression T_CLOSE_BRACKETS { $$ = symTab.a
 
 /*
  *	list the function declaration, similar as it is done with the variable declaration
- *	there is a problem with the list of parameters. it needs to be fixed to be able to get more than on parameter
- *	as a temporary solution, the function declaration accepts the maximum of two parameters.
  */
 function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType)); }
 				| T_WORD T_OPEN_PARENTHESIS parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
 					 											$$->params.push_back($3); }
-				| T_WORD T_OPEN_PARENTHESIS parameters T_COMMA parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
-					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
-					 											$$->params.push_back($3); $$->params.push_back($5);}
 				;
 
 /*
  *	gets the list of parameters - variables or arrays
  */
-parameters : type T_COLON variable_param { $$ = $3; }
-			| type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
-			| parameters T_COMMA parameters { $$ = $1; $$->params.push_back($3);}
+parameters: param { $$ = new AST::Param(TYPE::lastType); $$->paramList.push_back($1); }
+			| parameters T_COMMA param { $1->paramList.push_back($3);}
 			;
+
+/*
+ *	receives the declaration of new params
+ */
+param: type T_COLON variable_param { $$ = $3; }
+	 | type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
+	 ;
 
 /*
  *	gets the name for a variable param
