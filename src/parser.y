@@ -61,6 +61,10 @@
 %token T_DEF_FUNCTION
 %token T_END_FUNCTION
 %token T_RETURN
+%token T_IF
+%token T_THEN
+%token T_ELSE
+%token T_END_IF
 
 %token T_ASSIGN
 %token T_COMMA
@@ -223,9 +227,17 @@ array_list: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::lastS
 			 							  $$->variables.push_back(symTab.newVariable($3, TYPE::lastType)); }
 			;
 
+/*
+ *	target_array gets the array and the position to be assigned
+ */
 target_array: T_WORD T_OPEN_BRACKETS expression T_CLOSE_BRACKETS { $$ = symTab.assignVariable($1); $$->size = $3; }
 			 ;
 
+/*
+ *	list the function declaration, similar as it is done with the variable declaration
+ *	there is a problem with the list of parameters. it needs to be fixed to be able to get more than on parameter
+ *	as a temporary solution, the function declaration accepts the maximum of two parameters.
+ */
 function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType)); }
 				| T_WORD T_OPEN_PARENTHESIS parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
@@ -234,23 +246,33 @@ function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::Fun
 				| T_WORD T_OPEN_PARENTHESIS parameters T_COMMA parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
 					 											$$->params.push_back($3); $$->params.push_back($5);}
-				| function_list T_COMMA T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = $1;
-			 							  												$$->funcs.push_back(symTab.newVariable($3, TYPE::lastType)); }
 				;
 
+/*
+ *	gets the list of parameters - variables or arrays
+ */
 parameters : type T_COLON variable_param { $$ = $3; }
 			| type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
 			| parameters T_COMMA parameters { $$ = $1; $$->params.push_back($3);}
 			;
 
+/*
+ *	gets the name for a variable param
+ */
 variable_param:	T_WORD { $$ = new AST::VariableDeclaration(TYPE::lastType);
 						 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 				;
 
+/*
+ *	gets the name for an array param
+ */
 array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::lastSize);
 					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 			;
 
+/*
+ *	the definition of functions still need to be implemented
+ */
 def_func: T_DEF_FUNCTION { std::cout<< "The function definition needs to be inplemented yet"<<endl; };
 %%
 

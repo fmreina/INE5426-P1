@@ -238,8 +238,11 @@ void Word::printTree(){
 
 /*
  *	prints the function declaration in the following format (using portuguese)
- *	
- *	
+ *	Declaracão de funcão TYPE::Type: 
+ *	+parametros:
+ *	parametro <integer/real/boolean> param
+ *	parametro arranjo <integer/real/boolean> de tamanho <size>: param
+ *	Fim declaracao
  */
  void FunctionDeclaration::printTree(){
  	std::cout << "Declaracão de funcão " << TYPE::femaleName[type] << ": ";
