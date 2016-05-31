@@ -25,6 +25,8 @@
 	AST::VariableDeclaration *var;
 	AST::ArrayDeclaration *arr;
 	AST::FunctionDeclaration *fun;
+	AST::IfBlock *ifBlock;
+	AST::WhileBlock *whileBlock;
 }
 
 /*
@@ -65,6 +67,9 @@
 %token T_THEN
 %token T_ELSE
 %token T_END_IF
+%token T_WHILE
+%token T_DO
+%token T_END_WHILE
 
 %token T_ASSIGN
 %token T_COMMA
@@ -98,7 +103,8 @@
 %type <var> variable_param
 %type <arr> array_param
 %type <node> scope
-%type <node> if_scope
+%type <ifBlock> if_scope
+%type <whileBlock> while_scope
  
 /*
  *	Operator precedence for mathematical operators
@@ -273,11 +279,30 @@ array_param: T_WORD { $$ = new AST::ArrayDeclaration(TYPE::lastType, Array::last
 					 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
 			;
 
+/*
+ *	declaration of scope
+ */
 scope: if_scope { $$ = $1; }
+	 | while_scope { $$ = $1; }
 	 ;
 
-if_scope: T_IF expression T_THEN T_NEW_LINE lines T_END_IF { $$ = $5; }
+/*
+ *	declaration of if scope (conditional)
+ */
+if_scope: T_IF expression T_NEW_LINE T_THEN lines T_END_IF { $$ = new AST::IfBlock($2);
+																		if($5 != NULL) $$->thenLines.push_back($5); }
+		 | T_IF expression T_NEW_LINE T_THEN lines T_ELSE lines T_END_IF { $$ = new AST::IfBlock($2);
+																		if($5 != NULL) $$->thenLines.push_back($5); 
+																		$$->hasElse = true;
+																		if($7 != NULL) $$->elseLines.push_back($7); }
 		;
+
+/*
+ *	declaration of while scope (loop)
+ */
+while_scope: T_WHILE expression T_NEW_LINE T_DO lines T_END_WHILE { $$ = new AST::WhileBlock($2); 
+																	if($5 != NULL) $$->lines.push_back($5); }
+			;
 /*
  *	the definition of functions still need to be implemented
  */

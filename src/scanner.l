@@ -62,6 +62,9 @@ word[a-zA-Z]+
 "then"	{ return T_THEN; }
 "else"	{ return T_ELSE; }
 "end if"	{ return T_END_IF; }
+"while"	{ return T_WHILE; }
+"do"	{ return T_DO; }
+"end while"	{ return T_END_WHILE; }
 
 "TRUE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
 "FALSE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
