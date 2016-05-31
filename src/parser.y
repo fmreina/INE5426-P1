@@ -27,6 +27,9 @@
 	AST::FunctionDeclaration *fun;
 	AST::IfBlock *ifBlock;
 	AST::WhileBlock *whileBlock;
+	AST::FunctionDefinition *func_def;
+	AST::FunctionReturn *func_return;
+	AST::FunctionBody *body;
 }
 
 /*
@@ -98,13 +101,17 @@
 %type <arr> array_list
 %type <node> target_array
 %type <fun> function_list
-%type <node> def_func
+%type <func_def> def_func
 %type <node> parameters
+%type <node> param
 %type <var> variable_param
 %type <arr> array_param
 %type <node> scope
 %type <ifBlock> if_scope
 %type <whileBlock> while_scope
+%type <node> func_signature
+%type <body> func_body
+%type <func_return> return
  
 /*
  *	Operator precedence for mathematical operators
@@ -151,7 +158,7 @@ lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
 		| scope T_NEW_LINE
-		| def_func T_NEW_LINE
+		| def_func T_NEW_LINE { $$ = $1; }
 		;
 
 /*
@@ -244,26 +251,27 @@ target_array: T_WORD T_OPEN_BRACKETS expression T_CLOSE_BRACKETS { $$ = symTab.a
 
 /*
  *	list the function declaration, similar as it is done with the variable declaration
- *	there is a problem with the list of parameters. it needs to be fixed to be able to get more than on parameter
- *	as a temporary solution, the function declaration accepts the maximum of two parameters.
  */
 function_list: T_WORD T_OPEN_PARENTHESIS T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType)); }
 				| T_WORD T_OPEN_PARENTHESIS parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
 					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
 					 											$$->params.push_back($3); }
-				| T_WORD T_OPEN_PARENTHESIS parameters T_COMMA parameters T_CLOSE_PARENTHESIS { $$ = new AST::FunctionDeclaration(TYPE::lastType);
-					 											$$->funcs.push_back(symTab.newVariable($1, TYPE::lastType));
-					 											$$->params.push_back($3); $$->params.push_back($5);}
 				;
 
 /*
  *	gets the list of parameters - variables or arrays
  */
-parameters : type T_COLON variable_param { $$ = $3; }
-			| type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
-			| parameters T_COMMA parameters { $$ = $1; $$->params.push_back($3);}
+parameters: param { $$ = new AST::Param(TYPE::lastType); $$->paramList.push_back($1); }
+			| parameters T_COMMA param { $1->paramList.push_back($3);}
 			;
+
+/*
+ *	receives the declaration of new params
+ */
+param: type T_COLON variable_param { $$ = $3; }
+	 | type T_OPEN_BRACKETS size T_CLOSE_BRACKETS T_COLON array_param { $$ = $6; }
+	 ;
 
 /*
  *	gets the name for a variable param
@@ -306,6 +314,17 @@ while_scope: T_WHILE expression T_NEW_LINE T_DO lines T_END_WHILE { $$ = new AST
 /*
  *	the definition of functions still need to be implemented
  */
-def_func: T_DEF_FUNCTION { std::cout<< "The function definition needs to be inplemented yet"<<endl; };
+def_func: T_DEF_FUNCTION type T_COLON func_signature T_NEW_LINE func_body T_END_FUNCTION { $$ = new FunctionDefinition(TYPE::lastType, $4);
+																							$$->lines.push_back($6); 
+																						}
+func_signature: function_list { $$ = $1; $$->isDef = true;}
+				;
+
+func_body: lines return { $$ = new AST::FunctionBody(); $$->lines.push_back($1); $$->lines.push_back($2);}
+		 | func_body lines return { $1->lines.push_back($2); $1->lines.push_back($3);}
+		 | return { $$ = new AST::FunctionBody(); $$->lines.push_back($1); }
+		 ;
+
+return: T_RETURN expression T_SEMICOLON T_NEW_LINE{ $$ = new AST::FunctionReturn($2); };
 %%
 
