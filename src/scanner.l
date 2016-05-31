@@ -54,6 +54,14 @@ word[a-zA-Z]+
 "int"	{ return T_TYPE_INT; }
 "real"	{ return T_TYPE_REAL; }
 "bool"	{ return T_TYPE_BOOL; }
+"decl fun"	{ return T_DECL_FUNCTION; }
+"def fun"	{ return T_DEF_FUNCTION; }
+"end fun"	{ return T_END_FUNCTION; }
+"return"	{ return T_RETURN; }
+"if"	{ return T_IF; }
+"then"	{ return T_THEN; }
+"else"	{ return T_ELSE; }
+"end if"	{ return T_END_IF; }
 
 "TRUE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
 "FALSE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing

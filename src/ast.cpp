@@ -28,58 +28,162 @@ void Block::printTree(){
 
 /*
  *	prints the binary operation in the following format
- *	( <Node> (<Operation::Operation> <Type::Type>) <Node>)
+ *	( <Node> (<OPERATION::Operation> <TYPE::Type>) <Node>)
  *	example: ( 2 (sum real) 3)
  */
 void BinOp::printTree(){
-	std::cout << "(";
-	left->printTree();
-	std::cout << " (" << op << " " << type << ") ";
-	right->printTree();
-	std::cout << ")";
+	switch(op){
+		case OPERATION::assign:
+
+			// check if it's an array or not
+			if(left->size == NULL){
+				std::cout << "Atribuicão de valor para ";
+				left->printTree();
+				std::cout << ": ";
+			}else if(left->size != NULL){
+				std::cout << "Atribuicão de valor para arranjo "<<  TYPE::maleName[type] << " ";
+				left->printTree();
+				std::cout << " {+indice: ";
+				left->size->printTree();
+				std::cout << "}: ";
+			}
+
+			// check if it's an array or not
+			if(right->size == NULL){
+				right->printTree();	
+			}else if(right->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				right->printTree();
+				std::cout << " {+indice: ";
+				right->size->printTree();
+				std::cout << "}: ";
+			}
+			break;
+		default:
+			std::cout << "(";
+			
+			// check if it's an array or not
+			if(left->size == NULL){
+				left->printTree();
+			} else if(left->size != NULL){ 
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				left->printTree();
+				std::cout << " {+indice: ";
+				left->size->printTree();
+				std::cout << "}";
+			}
+			std::cout << " (" << OPERATION::name[op] << " ";
+			
+			if(OPERATION::maleGender[op]){
+				std::cout<< TYPE::maleName[type] << ") ";	
+			} else {
+				std::cout<< TYPE::femaleName[type] << ") ";	
+			}
+			
+			// check if it's an array or not
+			if(right->size == NULL){
+				right->printTree();
+			} else if(right->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				right->printTree();
+				std::cout << " {+indice: ";
+				right->size->printTree();
+				std::cout << "}";
+			}
+			
+			std::cout << ")";
+			break;
+	}
 	return;
 }
 
 /*
  *	prints the unary operation in the following format
- *	((<Operation::Operation> <Type::Type>) <Node>)
+ *	((<OPERATION::Operation> <TYPE::Type>) <Node>)
  *	example: ((negation boolean) true)
  */
 void UnOp::printTree(){
-	std::cout << "(";
-	std::cout << "(" << op << " " << type << ") ";
-	node->printTree();
-	std::cout << ")";
+	switch(op){
+		case OPERATION::parenthesis:
+			std::cout << "(abre parenteses) ";
+            // node->printTree();
+			// check if it's an array or not
+            if(node->size == NULL){
+				node->printTree();
+			} else if(node->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				node->printTree();
+				std::cout << " {+indice: ";
+				node->size->printTree();
+				std::cout << "}";
+			}
+            
+            std::cout << " (fecha parenteses)";
+			break;
+		default:
+			std::cout << "(";
+			std::cout << "(" << OPERATION::name[op] << " ";
+			if(OPERATION::maleGender[op]){
+				std::cout<< TYPE::maleName[type] << ") ";	
+			} else{
+				std::cout<< TYPE::femaleName[type] << ") ";	
+			}
+			// node->printTree();
+			// check if it's an array or not
+            if(node->size == NULL){
+				node->printTree();
+			} else if(node->size != NULL){
+				std::cout << "arranjo "<<  TYPE::maleName[type] << " ";
+				node->printTree();
+				std::cout << " {+indice: ";
+				node->size->printTree();
+				std::cout << "}";
+			}
+			std::cout << ")";
+			break;
+	}
 	return;
 }
 
 /*
  *	prints the variable in the following format (using portuguese)
- *	variável <Type::Type> <std::string>
+ *	variável <TYPE::Type> <std::string>
  *	exemple: variável boolean flag
  */
 void Word::printTree(){
-	std::cout << "variável " << type << " " << word;
+	if(size == NULL){
+		// if(type==TYPE::integer && type==TYPE::real && type==TYPE::boolean){
+		// 	std::cout << "variável " << TYPE::femaleName[type] << " " << word;
+		// } 
+		std::cout << "variável " << word;
+	}
+	else{
+		std::cout << word;	
+	}
 	return;
 }
 
 /*
  *	prints the value in the following format (using portuguese)
- *	valor <Type::Type> <std::string>
+ *	valor <TYPE::Type> <std::string>
  *	exemple: valor boolean TRUE
  */
  void Value::printTree(){
- 	std::cout << "valor " << type << " " << value;
+ 	std::cout << "valor " << TYPE::maleName[type] << " " << value;
  	return;
  }
 
 /*
  *	prints the value declaration in the following format (using portuguese)
- *	Declaracão de variável <Type::Type> <std::string>: <list of variables>
+ *	Declaracão de variável <TYPE::Type> <std::string>: <list of variables>
  *	exemple: Declaracão de variável <inteira>: <variable>
  */
  void VariableDeclaration::printTree(){
- 	std::cout << "Declaracão de variável " << type << ": ";
+ 	if(isParam){
+ 		std::cout << TYPE::maleName[type] << ": ";
+ 	}else{
+	 	std::cout << "Declaracão de variável "<< TYPE::femaleName[type] << ": ";
+ 	}
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
@@ -88,32 +192,73 @@ void Word::printTree(){
  }
 
 /*
- *	Method to make the coersion from integer to real when needed
+ *	Method to make the coercion from integer to real when needed
  */
  Node* Node::coerce(Node* node){
  	if(this->needCoersion(this->type, node->type)){
- 		std::cout<<"To implement coersion";
+ 		type = TYPE::real;
+ 		return new AST::Coercion(this);
  	}
- 	return 0;
+ 	type = TYPE::integer;
+ 	return this;
  }
 
 /*
- *	check if needs to make a coersion. If this->node is integer and the other is real return true.
+ *	check if needs to make a coercion. If this->node is integer and the other is real return true.
  */
- bool Node::needCoersion(Type::Type a, Type::Type b){
- 	return(a == Type::integer && b == Type::real);
+ bool Node::needCoersion(TYPE::Type a, TYPE::Type b){
+ 	return(a == TYPE::integer && b == TYPE::real);
  }
 
 /*
  *	prints the array declaration in the following format (using portuguese)
- *	Declaracão de arranjo <Type::Type> de tamanho <std::string>: <std::string>
+ *	Declaracão de arranjo <TYPE::Type> de tamanho <std::string>: <std::string>
  *	exemple: Declaracão de arranjo <inteiro> de tamanho <10>: <arr>
  */
  void ArrayDeclaration::printTree(){
- 	std::cout << "Declaracão de arranjo " << type << " de tamanho "<< size <<": ";
+ 	if(isParam){
+ 		std::cout << "arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
+ 	}else{
+ 		std::cout << "Declaracão de arranjo " << TYPE::maleName[type] << " de tamanho "<< size <<": ";
+ 	}
  	for( auto var = variables.begin(); var != variables.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != variables.end())
  			std::cout << ", ";
  	}
+ }
+
+/*
+ *	prints the coercion to real when needed
+ */
+ void Coercion::printTree(){
+ 	node->printTree();
+ 	std::cout << " para real";
+ }
+
+/*
+ *	prints the function declaration in the following format (using portuguese)
+ *	Declaracão de funcão TYPE::Type: 
+ *	+parametros:
+ *	parametro <integer/real/boolean> param
+ *	parametro arranjo <integer/real/boolean> de tamanho <size>: param
+ *	Fim declaracao
+ */
+ void FunctionDeclaration::printTree(){
+ 	std::cout << "Declaracão de funcão " << TYPE::femaleName[type] << ": ";
+ 	for( auto var = funcs.begin(); var != funcs.end(); var ++){
+ 		std::cout << dynamic_cast<Word *>(*var)->word;
+ 		if(next(var) != funcs.end())
+ 			std::cout << ", ";
+ 	}
+ 	std::cout << "\n+parametros: \n";
+ 	for( auto var = params.begin(); var != params.end(); var ++){
+ 		std::cout << "parametro ";
+ 		(*var)->isParam = true;
+ 		(*var)->printTree();
+ 		(*var)->isParam = false;
+ 		if(next(var) != params.end())
+ 			std::cout << "\n";
+ 	}
+ 	std::cout << "\nFim declaracao";
  }

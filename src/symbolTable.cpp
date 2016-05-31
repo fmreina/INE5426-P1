@@ -15,7 +15,7 @@ extern SymbolTable symTab;
  *	adds a new symbol in the symbolTable
  *	returns a new node
  */
-AST::Node* SymbolTable::newVariable( std::string id, Type::Type type){
+AST::Node* SymbolTable::newVariable( std::string id, TYPE::Type type){
 	if( checkId(id) ) yyerror("Redefinicão de variável! %s\n", id.c_str());
 	else {
 		Symbol entry(type, variable, false); 
@@ -29,7 +29,7 @@ AST::Node* SymbolTable::newVariable( std::string id, Type::Type type){
  *	initializes a variable declared previously
  */
 AST::Node* SymbolTable::assignVariable( std::string id ){
-	Type::Type type;
+	TYPE::Type type;
 	if( !checkId(id) ) yyerror("Variável ainda não foi definida! %s\n", id.c_str());
 	else{
 		type = entryList[id].type;
@@ -43,10 +43,10 @@ AST::Node* SymbolTable::assignVariable( std::string id ){
  *	retreive a variable previously declared and initialized
  */
 AST::Node* SymbolTable::useVariable( std::string id ){
-	Type::Type type;
+	TYPE::Type type;
 	if( !checkId(id) ) yyerror("Variável ainda não foi definida! %s\n", id.c_str());
 	else{
-		Type::Type type;
+		TYPE::Type type;
 		if( !entryList[id].initialized ) yyerror("Variável ainda não foi inicializada! %s\n", id.c_str());
 		return new AST::Word( id, type );
 	}
