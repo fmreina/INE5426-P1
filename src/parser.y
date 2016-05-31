@@ -27,6 +27,9 @@
 	AST::FunctionDeclaration *fun;
 	AST::IfBlock *ifBlock;
 	AST::WhileBlock *whileBlock;
+	AST::FunctionDefinition *func_def;
+	AST::FunctionReturn *func_return;
+	AST::FunctionBody *body;
 }
 
 /*
@@ -98,7 +101,7 @@
 %type <arr> array_list
 %type <node> target_array
 %type <fun> function_list
-%type <node> def_func
+%type <func_def> def_func
 %type <node> parameters
 %type <node> param
 %type <var> variable_param
@@ -106,6 +109,9 @@
 %type <node> scope
 %type <ifBlock> if_scope
 %type <whileBlock> while_scope
+%type <node> func_signature
+%type <body> func_body
+%type <func_return> return
  
 /*
  *	Operator precedence for mathematical operators
@@ -152,7 +158,7 @@ lines :	line { $$ = new AST::Block(); if ($1 != NULL) $$->lines.push_back($1); }
 line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
 		| scope T_NEW_LINE
-		| def_func T_NEW_LINE
+		| def_func T_NEW_LINE { $$ = $1; }
 		;
 
 /*
@@ -308,6 +314,17 @@ while_scope: T_WHILE expression T_NEW_LINE T_DO lines T_END_WHILE { $$ = new AST
 /*
  *	the definition of functions still need to be implemented
  */
-def_func: T_DEF_FUNCTION { std::cout<< "The function definition needs to be inplemented yet"<<endl; };
+def_func: T_DEF_FUNCTION type T_COLON func_signature T_NEW_LINE func_body T_END_FUNCTION { $$ = new FunctionDefinition(TYPE::lastType, $4);
+																							$$->lines.push_back($6); 
+																						}
+func_signature: function_list { $$ = $1; $$->isDef = true;}
+				;
+
+func_body: lines return { $$ = new AST::FunctionBody(); $$->lines.push_back($1); $$->lines.push_back($2);}
+		 | func_body lines return { $1->lines.push_back($2); $1->lines.push_back($3);}
+		 | return { $$ = new AST::FunctionBody(); $$->lines.push_back($1); }
+		 ;
+
+return: T_RETURN expression T_SEMICOLON T_NEW_LINE{ $$ = new AST::FunctionReturn($2); };
 %%
 

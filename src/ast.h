@@ -42,6 +42,7 @@ namespace AST {
 			Node* coerce(Node* node);
 			bool needCoersion(TYPE::Type a, TYPE::Type b);
 			bool isParam = false;
+			bool isDef = false;
 			// ParamList params;
 			NodeList paramList;
 	};
@@ -186,7 +187,35 @@ namespace AST {
 	 };
 
 	 /*
-	 *	@class IfBlock to work with a block structure
+	 *	@class FunctionDeclaration
+	 *	@attribute NodeList (list of functions)
+	 *	@param TYPE::Type (type is assigned to the Node)
+	 *	@method printTree  @return void
+	 */
+	 class FunctionDefinition : public Node {
+	 	public:
+	 		TYPE::Type type;
+	 		NodeList lines;
+	 		Node *signature;
+	 		FunctionDefinition (TYPE::Type type, Node *signature) : type(type), signature(signature) { }
+	 		void printTree();
+	 };
+
+	 /*
+	 *	@class FunctionReturn
+	 *	@attribute Node*
+	 *	@method printTree  @return void
+	 *	stores and returns the return value of the function
+	 */
+	 class FunctionReturn : public Node {
+	 	public:
+	 		Node *value;
+	 		FunctionReturn ( Node *value) : value(value) { }
+	 		void printTree();
+	 };
+
+	 /*
+	 *	@class IfBlock to work with a if-then-else structure
 	 *	@attribute NodeList (list of lines), Node*, bool
 	 *	@param Node*
 	 *	@method printTree  @return void
@@ -202,7 +231,7 @@ namespace AST {
 	};
 
 	/*
-	 *	@class WhileBlock to work with a block structure
+	 *	@class WhileBlock to work with a while structure
 	 *	@attribute NodeList (list of lines), Node*
 	 *	@param Node*
 	 *	@method printTree  @return void
@@ -212,6 +241,19 @@ namespace AST {
 			NodeList lines;
 			Node* condition;
 			WhileBlock(Node* condition) : condition(condition) { }
+			void printTree();
+	};
+
+	/*
+	 *	@class FunctionBody to work with a function block structure
+	 *	@attribute NodeList (list of lines)
+	 *	@param Node*
+	 *	@method printTree  @return void
+	 */
+	class FunctionBody : public Node {
+		public:
+			NodeList lines;
+			FunctionBody() { }
 			void printTree();
 	};
 }

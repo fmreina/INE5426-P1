@@ -56,7 +56,7 @@ word[a-zA-Z]+
 "bool"	{ return T_TYPE_BOOL; }
 "decl fun"	{ return T_DECL_FUNCTION; }
 "def fun"	{ return T_DEF_FUNCTION; }
-"end fun"	{ return T_END_FUNCTION; }
+"end def"	{ return T_END_FUNCTION; }
 "return"	{ return T_RETURN; }
 "if"	{ return T_IF; }
 "then"	{ return T_THEN; }

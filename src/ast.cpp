@@ -152,9 +152,9 @@ void UnOp::printTree(){
  */
 void Word::printTree(){
 	if(size == NULL){
-		// if(type==TYPE::integer && type==TYPE::real && type==TYPE::boolean){
-		// 	std::cout << "variável " << TYPE::femaleName[type] << " " << word;
-		// } 
+		if(type==TYPE::integer && type==TYPE::real && type==TYPE::boolean){
+			std::cout << "variável " << TYPE::femaleName[type] << " " << word;
+		} 
 		std::cout << "variável " << word;
 	}
 	else{
@@ -245,13 +245,15 @@ void Word::printTree(){
  *	Fim declaracao
  */
  void FunctionDeclaration::printTree(){
- 	std::cout << "Declaracão de funcão " << TYPE::femaleName[type] << ": ";
+ 	if(!isDef){
+	 	std::cout << "Declaracão de funcão " << TYPE::femaleName[type] << ": ";
+ 	}
  	for( auto var = funcs.begin(); var != funcs.end(); var ++){
  		std::cout << dynamic_cast<Word *>(*var)->word;
  		if(next(var) != funcs.end())
  			std::cout << ", ";
  	}
- 	std::cout << "\n+parametros: \n";
+ 	std::cout << "\n+parametros:"<<endl;
  	for( auto var = params.begin(); var != params.end(); var ++){
  		// std::cout << "parametro ";
  		(*var)->isParam = true;
@@ -260,7 +262,41 @@ void Word::printTree(){
  		if(next(var) != params.end())
  			std::cout << "\n";
  	}
- 	std::cout << "\nFim declaracao";
+
+ 	if(!isDef){
+ 		std::cout << "\nFim declaracao";
+ 	}
+ }
+
+ /*
+ *	prints the function declaration in the following format (using portuguese)
+ *	Declaracão de funcão TYPE::Type: 
+ *	+parametros:
+ *	parametro <integer/real/boolean> param
+ *	parametro arranjo <integer/real/boolean> de tamanho <size>: param
+ *	Fim declaracao
+ */
+ void FunctionDefinition::printTree(){
+ 	std::cout << "Definicão de funcão " << TYPE::femaleName[type] << ": ";
+ 	signature->printTree();
+
+ 	std::cout << "\n+corpo:"<<endl;
+ 	for( auto var = lines.begin(); var != lines.end(); var ++){
+ 		// std::cout << dynamic_cast<Word *>(*var)->word;
+ 		(*var)->printTree();
+ 		if(next(var) != lines.end())
+ 			std::cout << ", ";
+ 	}
+ 	std::cout << "\nFim definicão";
+ }
+
+/*
+ *	prints the return value of the function declaration
+ */
+void FunctionReturn::printTree(){
+ 	std::cout << "Retorno de funcão: ";
+ 	value->printTree();
+ 	std::cout<<endl;
  }
 
 /*
@@ -314,4 +350,14 @@ void WhileBlock::printTree(){
 		line->printTree();
 	}
 	std::cout<<"Fim laco";
+}
+
+/*
+ *	print the lines of the scope of the function definition
+ * 	it's the same as the printing function of the block but without a break line in the end
+ */
+void FunctionBody::printTree(){
+	for(Node* line : lines){
+		line->printTree();
+	}
 }
