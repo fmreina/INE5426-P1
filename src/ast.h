@@ -16,6 +16,8 @@ using namespace std;
 extern void yyerrer(const char *s, ...);
 namespace AST {
 
+	static std::string compoundName;
+
 	class Node;
 
 	/*

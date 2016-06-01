@@ -189,9 +189,23 @@ type :	T_TYPE_INT { TYPE::lastType = TYPE::integer; }
  *	or a list of variables followed by a word { receives a new list and a variable, and push the the variable into the list }
  */
 variable_list:	T_WORD { $$ = new AST::VariableDeclaration(TYPE::lastType);
-						 $$->variables.push_back(symTab.newVariable($1, TYPE::lastType)); }
+						 std::string varName;
+						 if(AST::compoundName != "") {
+						 	varName = AST::compoundName +"."+ $1;
+						 }else{
+						 	varName = $1;
+						 	AST::compoundName = $1;
+						 }
+						 $$->variables.push_back(symTab.newVariable(varName, TYPE::lastType)); }
 				| variable_list T_COMMA T_WORD { $$ = $1;
-												 $$->variables.push_back(symTab.newVariable($3, TYPE::lastType)); }
+												 std::string varName;
+												 if(AST::compoundName != "") {
+												 	varName = AST::compoundName +"."+ $3;
+												 }else{
+												 	varName = $3;
+												 	AST::compoundName = $3;
+												 }
+												 $$->variables.push_back(symTab.newVariable(varName, TYPE::lastType)); }
 				;
 
 /*
@@ -333,7 +347,8 @@ func_body: lines return { $$ = new AST::FunctionBody(); $$->lines.push_back($1);
 
 return: T_RETURN expression T_SEMICOLON T_NEW_LINE { $$ = new AST::FunctionReturn($2); };
 
-def_type: T_DEF_TYPE T_COLON variable_list T_NEW_LINE type_body T_END_DEF { $$ = new AST::TypeDef($3); 
+def_type: T_DEF_TYPE T_COLON variable_list T_NEW_LINE type_body T_END_DEF { AST::compoundName = "";
+																			$$ = new AST::TypeDef($3); 
 																			$$->nodes.push_back($5); }
 		;
 
