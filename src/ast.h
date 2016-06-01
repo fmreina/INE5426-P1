@@ -190,7 +190,7 @@ namespace AST {
 	 /*
 	 *	@class FunctionDeclaration
 	 *	@attribute NodeList (list of functions)
-	 *	@param TYPE::Type (type is assigned to the Node)
+	 *	@param TYPE::Type (type is assigned to the Node) , Node*
 	 *	@method printTree  @return void
 	 */
 	 class FunctionDefinition : public Node {
@@ -206,6 +206,7 @@ namespace AST {
 	 *	@class FunctionReturn
 	 *	@attribute Node*
 	 *	@method printTree  @return void
+	 *	@param Node*
 	 *	stores and returns the return value of the function
 	 */
 	 class FunctionReturn : public Node {
@@ -248,7 +249,6 @@ namespace AST {
 	/*
 	 *	@class FunctionBody to work with a function block structure
 	 *	@attribute NodeList (list of lines)
-	 *	@param Node*
 	 *	@method printTree  @return void
 	 */
 	class FunctionBody : public Node {
@@ -259,24 +259,22 @@ namespace AST {
 	};
 
 	/*
-	 *	@class WhileBlock to work with a while structure
-	 *	@attribute NodeList (list of lines), Node*
+	 *	@class TypeDef to work with a while structure
+	 *	@attribute NodeList (list of Nodes - componentes), Node*
 	 *	@param Node*
 	 *	@method printTree  @return void
 	 */
 	class TypeDef : public Node {
 		public:
 			NodeList nodes;
-			int size = 0;
 			Node *name;
 			TypeDef(Node *name) : name(name) { }
 			void printTree();
 	};
 
 	/*
-	 *	@class FunctionBody to work with a function block structure
+	 *	@class TypeBody to work with a function block structure
 	 *	@attribute NodeList (list of lines)
-	 *	@param Node*
 	 *	@method printTree  @return void
 	 */
 	class TypeBody : public Node {

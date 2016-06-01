@@ -363,8 +363,7 @@ void FunctionBody::printTree(){
 }
 
 /*
- *	print the lines of the scope of the function definition
- * 	it's the same as the printing function of the block but without a break line in the end
+ *	prints the definition of a compound type, listing it's components
  */
 void TypeDef::printTree(){
 	std::cout<<"Definicao tipo: ";
@@ -384,8 +383,7 @@ void TypeDef::printTree(){
 }
 
 /*
- *	print the lines of the scope of the function definition
- * 	it's the same as the printing function of the block but without a break line in the end
+ *	print the components of the scope of the compound type
  */
 void TypeBody::printTree(){
 	for( auto var = lines.begin(); var != lines.end(); var ++){
