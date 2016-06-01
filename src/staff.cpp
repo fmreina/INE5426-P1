@@ -2,8 +2,6 @@
  *	Staff
  *	references: 
  *	 - llpilla/compiler_examples/allen (github)
- *	 - Aho, Alfred, et al - Compilers: principles, techniques, and tools - 2nd ed. 2007 Pearson Education
- *	 - Levine, John - Flex & Bison - Unix text processing tools - 2009 O'Reilly Media
  */
 #include "staff.h"
 
@@ -82,11 +80,11 @@ Type TYPE::getUnType(Type type, OPERATION::Operation op){
  *	print error messages
  */
 void TYPE::wrongTypeError(OPERATION::Operation op, Type expected, Type given){
-	yyerror("semântico: operacão %s espera %s mas recebeu %s.", OPERATION::name[op].c_str(), maleName[expected].c_str(), maleName[given].c_str());
+	yyerror("semântico: operacão %s espera %s mas recebeu %s.\n", OPERATION::name[op].c_str(), maleName[expected].c_str(), maleName[given].c_str());
 	return;
 }
 
 void TYPE::wrongTypeError(OPERATION::Operation op, Type expected1, Type expected2, Type given){
-	yyerror("semântico: operacão %s espera %s ou %s mas recebeu %s.", OPERATION::name[op].c_str(), maleName[expected1].c_str(), maleName[expected2].c_str(), maleName[given].c_str());
+	yyerror("semântico: operacão %s espera %s ou %s mas recebeu %s.\n", OPERATION::name[op].c_str(), maleName[expected1].c_str(), maleName[expected2].c_str(), maleName[given].c_str());
 	return;
 }
