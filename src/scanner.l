@@ -56,7 +56,7 @@ word[a-zA-Z]+
 "bool"	{ return T_TYPE_BOOL; }
 "decl fun"	{ return T_DECL_FUNCTION; }
 "def fun"	{ return T_DEF_FUNCTION; }
-"end def"	{ return T_END_FUNCTION; }
+"end def"	{ return T_END_DEF; }
 "return"	{ return T_RETURN; }
 "if"	{ return T_IF; }
 "then"	{ return T_THEN; }
@@ -65,6 +65,7 @@ word[a-zA-Z]+
 "while"	{ return T_WHILE; }
 "do"	{ return T_DO; }
 "end while"	{ return T_END_WHILE; }
+"def type" { return T_DEF_TYPE; }
 
 "TRUE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
 "FALSE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
