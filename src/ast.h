@@ -43,6 +43,7 @@ namespace AST {
 			bool needCoersion(TYPE::Type a, TYPE::Type b);
 			bool isParam = false;
 			bool isDef = false;
+			bool isComplex = false;
 			// ParamList params;
 			NodeList paramList;
 	};
@@ -254,6 +255,34 @@ namespace AST {
 		public:
 			NodeList lines;
 			FunctionBody() { }
+			void printTree();
+	};
+
+	/*
+	 *	@class WhileBlock to work with a while structure
+	 *	@attribute NodeList (list of lines), Node*
+	 *	@param Node*
+	 *	@method printTree  @return void
+	 */
+	class TypeDef : public Node {
+		public:
+			NodeList nodes;
+			int size = 0;
+			Node *name;
+			TypeDef(Node *name) : name(name) { }
+			void printTree();
+	};
+
+	/*
+	 *	@class FunctionBody to work with a function block structure
+	 *	@attribute NodeList (list of lines)
+	 *	@param Node*
+	 *	@method printTree  @return void
+	 */
+	class TypeBody : public Node {
+		public:
+			NodeList lines;
+			TypeBody() { }
 			void printTree();
 	};
 }

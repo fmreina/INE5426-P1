@@ -181,7 +181,7 @@ void Word::printTree(){
  void VariableDeclaration::printTree(){
  	if(isParam){
  		std::cout << TYPE::maleName[type] << ": ";
- 	}else{
+ 	}else if(!isComplex){
 	 	std::cout << "Declaracão de variável "<< TYPE::femaleName[type] << ": ";
  	}
  	for( auto var = variables.begin(); var != variables.end(); var ++){
@@ -360,4 +360,40 @@ void FunctionBody::printTree(){
 	for(Node* line : lines){
 		line->printTree();
 	}
+}
+
+/*
+ *	print the lines of the scope of the function definition
+ * 	it's the same as the printing function of the block but without a break line in the end
+ */
+void TypeDef::printTree(){
+	std::cout<<"Definicao tipo: ";
+	name->isComplex = true;
+	name->printTree();
+	name->isComplex = false;
+	std::cout<<"\n+componentes:\n";
+	for( auto var = nodes.begin(); var != nodes.end(); var ++){
+ 		(*var)->isParam = true;
+ 		(*var)->printTree();
+ 		(*var)->isParam = false;
+ 		if(next(var) != nodes.end())
+ 			std::cout << "\n";
+ 	}
+
+	std::cout<<"\nFim definicao";
+}
+
+/*
+ *	print the lines of the scope of the function definition
+ * 	it's the same as the printing function of the block but without a break line in the end
+ */
+void TypeBody::printTree(){
+	for( auto var = lines.begin(); var != lines.end(); var ++){
+ 		std::cout<<"Componente ";
+ 		(*var)->isParam = true;
+ 		(*var)->printTree();
+ 		(*var)->isParam = false;
+ 		if(next(var) != lines.end())
+ 			std::cout << "\n";
+ 	}
 }

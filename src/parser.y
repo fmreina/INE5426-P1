@@ -30,6 +30,8 @@
 	AST::FunctionDefinition *func_def;
 	AST::FunctionReturn *func_return;
 	AST::FunctionBody *body;
+	AST::TypeDef *type_def;
+	AST::TypeBody *type_body;
 }
 
 /*
@@ -64,7 +66,7 @@
 %token T_TYPE_BOOL
 %token T_DECL_FUNCTION
 %token T_DEF_FUNCTION
-%token T_END_FUNCTION
+%token T_END_DEF
 %token T_RETURN
 %token T_IF
 %token T_THEN
@@ -73,6 +75,7 @@
 %token T_WHILE
 %token T_DO
 %token T_END_WHILE
+%token T_DEF_TYPE
 
 %token T_ASSIGN
 %token T_COMMA
@@ -112,6 +115,8 @@
 %type <node> func_signature
 %type <body> func_body
 %type <func_return> return
+%type <type_body> type_body
+%type <type_def> def_type
  
 /*
  *	Operator precedence for mathematical operators
@@ -159,6 +164,7 @@ line :	declaration T_SEMICOLON T_NEW_LINE { $$ = $1; }
 		| assignment T_SEMICOLON T_NEW_LINE
 		| scope T_NEW_LINE
 		| def_func T_NEW_LINE { $$ = $1; }
+		| def_type T_NEW_LINE { $$ = $1; }
 		;
 
 /*
@@ -314,7 +320,7 @@ while_scope: T_WHILE expression T_NEW_LINE T_DO lines T_END_WHILE { $$ = new AST
 /*
  *	the definition of functions still need to be implemented
  */
-def_func: T_DEF_FUNCTION type T_COLON func_signature T_NEW_LINE func_body T_END_FUNCTION { $$ = new FunctionDefinition(TYPE::lastType, $4);
+def_func: T_DEF_FUNCTION type T_COLON func_signature T_NEW_LINE func_body T_END_DEF { $$ = new FunctionDefinition(TYPE::lastType, $4);
 																							$$->lines.push_back($6); 
 																						}
 func_signature: function_list { $$ = $1; $$->isDef = true;}
@@ -325,6 +331,15 @@ func_body: lines return { $$ = new AST::FunctionBody(); $$->lines.push_back($1);
 		 | return { $$ = new AST::FunctionBody(); $$->lines.push_back($1); }
 		 ;
 
-return: T_RETURN expression T_SEMICOLON T_NEW_LINE{ $$ = new AST::FunctionReturn($2); };
+return: T_RETURN expression T_SEMICOLON T_NEW_LINE { $$ = new AST::FunctionReturn($2); };
+
+def_type: T_DEF_TYPE T_COLON variable_list T_NEW_LINE type_body T_END_DEF { $$ = new AST::TypeDef($3); 
+																			$$->nodes.push_back($5); }
+		;
+
+type_body: declaration T_SEMICOLON T_NEW_LINE { $$ = new AST::TypeBody(); $$->lines.push_back($1); }
+		 | type_body declaration T_SEMICOLON T_NEW_LINE { $1->lines.push_back($2); }
+		 ;
+
 %%
 
