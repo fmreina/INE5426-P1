@@ -11,10 +11,11 @@ The objective is to begin building a compiler for a version of the Allen languag
 * scanner.l: Flex scanner
 * main.cpp: C++ main file
 * Makefile: call make to compile
+* others: auxiliar
 
 ####References:
 - All the work makes reference to the following
-* [llpilla](https://github.com/llpilla/compiler_examples/tree/master/allen) @github
+* [llpilla](https://github.com/llpilla/compiler_examples/tree/master/allen) - Allen @github
 
 * Aho, Alfred, et al - **Compilers: principles, techniques, and tools** - 2nd ed. 2007 Pearson Education
 
