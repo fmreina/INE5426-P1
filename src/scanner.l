@@ -28,13 +28,47 @@ word[a-zA-Z]+
 [ \t]	; // to ignore white spaces
 \n		{ return T_NEW_LINE; }
 
+"+"		{ return T_PLUS; }
+"-"		{ return T_MINUS; }
+"*"		{ return T_TIMES; }
+"/"     { return T_DIVIDE; }
+":="	{ return T_ASSIGN; }
+">"		{ return T_GREATER; }
+">="	{ return T_GREATER_EQUALS; }	
+"<"		{ return T_SMALLER; }	
+"<="	{ return T_SMALLER_EQUALS; }	
+"="		{ return T_EQUALS; }	
+"~="	{ return T_DIFFERENT; }	
+"~"		{ return T_NOT; }	
+"AND"	{ return T_AND; }	
+"OR"	{ return T_OR; }	
+
 ","		{ return T_COMMA; }
 ":"		{ return T_COLON; }
 ";"		{ return T_SEMICOLON; } // semicolon indicates the end of the current line.
+"("		{ return T_OPEN_PARENTHESIS; }
+")"		{ return T_CLOSE_PARENTHESIS; }
+"["		{ return T_OPEN_BRACKETS; }
+"]"		{ return T_CLOSE_BRACKETS; }
 
 "int"	{ return T_TYPE_INT; }
 "real"	{ return T_TYPE_REAL; }
 "bool"	{ return T_TYPE_BOOL; }
+"decl fun"	{ return T_DECL_FUNCTION; }
+"def fun"	{ return T_DEF_FUNCTION; }
+"end def"	{ return T_END_DEF; }
+"return"	{ return T_RETURN; }
+"if"	{ return T_IF; }
+"then"	{ return T_THEN; }
+"else"	{ return T_ELSE; }
+"end if"	{ return T_END_IF; }
+"while"	{ return T_WHILE; }
+"do"	{ return T_DO; }
+"end while"	{ return T_END_WHILE; }
+"def type" { return T_DEF_TYPE; }
+
+"TRUE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
+"FALSE"	{ yylval.string = strdup(yytext); return T_BOOL; } // received as string as the objective is only printing
 {digit}	{ yylval.string = strdup(yytext); return T_INT; } // received as string as the objective is only printing
 {real}	{ yylval.string = strdup(yytext); return T_REAL; } // received as string as the objective is only printing
 {word}	{ yylval.string = strdup(yytext); return T_WORD; } // received as string as the objective is only printing

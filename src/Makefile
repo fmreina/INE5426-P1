@@ -3,7 +3,7 @@ FLEX=flex
 BISON=bison
 CC=clang++
 PARAM=-std=c++11 -fcxx-exceptions -Wno-deprecated-register
-OUTPUT=dothething
+OUTPUT=run
 
 all: flex yacc clang
 
